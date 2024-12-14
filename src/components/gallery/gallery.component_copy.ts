@@ -4,108 +4,142 @@ import {
   html,
   observable,
   slotted,
-  ViewTemplate,
 } from "@microsoft/fast-element";
 import { Splide as _Splide } from "@splidejs/splide";
 import defaultStyle from "./gallery.styles.ts";
-import { repeat } from "@microsoft/fast-element";
-import { isEqual } from "lodash";
+import { attr } from "@microsoft/fast-element";
 
 type ImageProps = {
   src: string;
   alt: string;
 };
 
+const template = html<LightboxGallery>`
+  ${(x) =>
+    x.isOpen
+      ? html`
+          <!-- <style>
+            slot[name="source"] {
+              display: none;
+            }
+          </style> -->
+          <slot name="source" ${slotted("slottedSource")}></slot>
+          <div class="wrapper">
+            <div class="splide"></div>
+          </div>
+        `
+      : html`<slot name="source" ${slotted("slottedSource")}></slot>`}
+`;
+
 class LightboxGallery extends FASTElement {
-  @observable
-  slottedSources?: HTMLElement[] = [];
+  @attr({ attribute: "is-open", mode: "boolean" })
+  isOpen: boolean = false;
 
   @observable
-  count: number = 0;
+  readonly slottedSource?: HTMLElement[] = [];
+
+  private splide?: _Splide;
 
   @observable
-  private _splide?: _Splide;
+  imageMetadata?: ImageProps[] = [];
 
-  @observable
-  _dataSlotted: ImageProps[] = [];
+  slottedSourceChanged(_oldSlot: HTMLElement[], newSlot: HTMLElement[]) {
+    const ulEl = newSlot.find((el) => el.hasAttribute("data-lightbox"));
+    const imgEls = ulEl?.querySelectorAll("img");
+    if (!imgEls) return;
+    this.imageMetadata = Array.from(imgEls).map((img) => {
+      return {
+        src: (img as HTMLImageElement).src,
+        alt: (img as HTMLImageElement).alt,
+      };
+    });
 
-  setAllImageMetadata(): void {
-    const ulElement = this.slottedSources?.find((el) => el.tagName === "UL");
-    if (!ulElement) return;
-    const allImgNodes = ulElement.querySelectorAll("img");
-    const imageMetadata =
-      allImgNodes.length === 0
-        ? []
-        : Array.from(allImgNodes).map((x) => {
-            return { src: x.src, alt: x.alt };
-          });
-
-    this._dataSlotted = [...imageMetadata];
+    this.initSplide();
   }
 
-  _splideChanged(_oldValue: _Splide, _newValue: _Splide) {}
+  initSplide() {
+    if (this.splide) {
+      this.splide.destroy();
+    }
 
-  _dataSlottedChanged(_oldValue: ImageProps[], _newValue: ImageProps[]) {
-    if (_newValue.length === 0) return;
+    const root = this.shadowRoot?.querySelector(".splide");
+    const rootEl = root as HTMLElement;
+    if (!rootEl) return;
 
-    const root = this.shadowRoot?.querySelector("[data-lightbox]");
-    const el = root as HTMLElement;
-    if (!el) return;
-
-    const splide = new _Splide(el, {
-      autoplay: true,
-      perPage: 1,
-    }).mount();
-  }
-
-  slottedSourcesChanged(_oldValue: HTMLElement[], _newValue: HTMLElement[]) {
-    if (_newValue.length === 0) return;
-    const ulElement = this.slottedSources?.find((el) => el.tagName === "UL");
-    if (!ulElement) return;
-    const allImgNodes = ulElement.querySelectorAll("img");
-    const imageMetadata =
-      allImgNodes.length === 0
-        ? []
-        : Array.from(allImgNodes).map((x) => {
-            return { src: x.src, alt: x.alt };
-          });
-    this._dataSlotted = [...imageMetadata];
-  }
-
-  createMainCarousel(): ViewTemplate {
-    return html`
-      <section class="splide" data-lightbox>
-        <div class="splide__track">
-          <ul class="splide__list">
-            ${repeat(
-              (x: LightboxGallery) => x._dataSlotted,
-              html<ImageProps>`
-                <li class="splide__slide">
-                  ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
-                </li>
-              `
-            )}
-          </ul>
-        </div>
-      </section>
-    `;
-  }
-
-  createThumbnailsCarousel(): ViewTemplate {
-    return html`
-      <section>
-        <ul class="thumbnails">
-          ${repeat(
-            (x: LightboxGallery) => x._dataSlotted,
-            html<ImageProps>`
-              <li class="thumbnail">
-                ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
-              </li>
-            `
-          )}
+    const mainCarouselTemplate = `
+      <div class="splide__track">
+        <ul class="splide__list">
+          ${this.imageMetadata
+            ?.map(
+              (data) =>
+                `<li class="splide__slide">
+                  <img src=${data.src} alt=${data.alt} />
+                </li>`
+            )
+            .join("")}
         </ul>
-      </section>
+      </div>
     `;
+
+    this.splide = new _Splide(rootEl, {
+      perPage: 1,
+      type: "loop",
+      autoplay: true,
+    });
+
+    const splide = this.splide;
+
+    const thumbnailsCarouselTemplate = `
+      <div>
+        <ul class="thumbnails">
+          ${this.imageMetadata
+            ?.map(
+              (data) =>
+                `<li class="thumbnail">
+                  <img src=${data.src} alt=${data.alt} />
+                </li>`
+            )
+            .join("")}
+        </ul>
+      </div>
+    `;
+    rootEl.innerHTML = Array.of(
+      mainCarouselTemplate,
+      thumbnailsCarouselTemplate
+    ).join("");
+
+    const thumbnails = this.shadowRoot?.querySelectorAll(".thumbnail");
+    let current: Element;
+    if (!thumbnails || thumbnails?.length == 0) return;
+
+    for (let i = 0; i < thumbnails.length; i++) {
+      initThumbnail(thumbnails[i], i);
+    }
+
+    function initThumbnail(thumbnail: Element, index: number) {
+      thumbnail.addEventListener("click", function () {
+        splide.go(index);
+      });
+    }
+
+    splide.on("mounted move", function () {
+      const thumbnail = thumbnails[splide.index];
+
+      if (thumbnail) {
+        if (current) {
+          current.classList.remove("is-active");
+        }
+
+        thumbnail.classList.add("is-active");
+        current = thumbnail;
+      }
+    });
+
+    splide.mount();
+  }
+
+  handleClick() {
+    this.splide?.go("+1");
   }
 
   override connectedCallback() {
@@ -117,20 +151,8 @@ class LightboxGallery extends FASTElement {
   }
 }
 
-const template = html<LightboxGallery>`
-  <style>
-    slot[name="sources"] {
-      display: none;
-    }
-  </style>
-  <div class="wrapper">
-    <slot name="sources" ${slotted("slottedSources")}></slot>
-    ${(x) => x.createMainCarousel()}
-  </div>
-`;
 const styles = [
   defaultStyle,
-
   css`
     .wrapper {
       position: fixed;
@@ -185,7 +207,7 @@ const styles = [
     .thumbnail.is-active {
       opacity: 1;
     }
-    .thumbnail.is-active img {
+    .thumbnail.is-active {
       border-radius: 8px;
       outline: 2px solid red;
       outline-offset: -2px;
