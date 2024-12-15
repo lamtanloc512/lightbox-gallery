@@ -1,40 +1,10 @@
-import { css, FASTElement, html } from "@microsoft/fast-element";
+import { css, FASTElement, html, ref, when } from "@microsoft/fast-element";
 import { Splide as _Splide } from "@splidejs/splide";
 import defaultStyle from "./gallery.styles.ts";
-import { slotted } from "@microsoft/fast-element";
 import { observable } from "@microsoft/fast-element";
+import { repeat } from "@microsoft/fast-element";
+import { isEqual } from "lodash";
 
-const template = html`
-  <div class="wrapper">
-    <section id="main-carousel" class="splide" aria-label="My Awesome Gallery">
-      <div class="splide__track">
-        <slot name="sources"></slot>
-      </div>
-    </section>
-    <section>
-      <ul id="thumbnails" class="thumbnails">
-        <li class="thumbnail">
-          <img
-            src="https://cdn-cm.freepik.com/resources/6d2ef100-2ba9-4a4c-9750-f714eb8e5d99.jpg?token=exp=1734079945~hmac=1d9c69783e3617c0c404879013fc37fdb8838349c132aaf3d4e312bcbcc9b662"
-            alt=""
-          />
-        </li>
-        <li class="thumbnail">
-          <img
-            src="https://cdn-cm.freepik.com/resources/86feed89-28ce-4135-8a41-65e7bde2532f.jpg?token=exp=1734079973~hmac=a9e0e07660cd34a28ccf2fd18d834a3b5335358f1b7ce694e04a9c6263539e56"
-            alt=""
-          />
-        </li>
-        <li class="thumbnail">
-          <img
-            src="https://cdn-cm.freepik.com/resources/821a5f45-ea60-4066-937e-867cf3c240e2.jpg?token=exp=1734080710~hmac=e97b79c500d12fc817c4d7e5547aa41e46552899993b30df45763b99f36cd8f6"
-            alt=""
-          />
-        </li>
-      </ul>
-    </section>
-  </div>
-`;
 const styles = [
   defaultStyle,
   css`
@@ -98,7 +68,7 @@ const styles = [
       opacity: 1;
     }
 
-    .thumbnail.is-active img {
+    .thumbnail.is-active {
       border-radius: 8px;
       outline: 2px solid red;
       outline-offset: -2px;
@@ -110,52 +80,137 @@ const styles = [
   `,
 ];
 
+type ImgMetadata = {
+  src: string;
+  alt: string;
+};
 class LightboxGallery extends FASTElement {
+  // Properties
   @observable
-  slottedSources?: HTMLElement[] = [];
+  imgArray: ImgMetadata[] = [];
+  @observable
+  splideRef?: HTMLElement;
+  @observable
+  thumbnailRef?: HTMLElement;
+  @observable
+  splideInstance?: _Splide;
+  @observable
+  currentElement?: Element;
 
-  override connectedCallback() {
-    super.connectedCallback();
-    const root = this.shadowRoot?.querySelector("#main-carousel");
-    const el = root as HTMLElement;
-    if (!el) return;
+  // Methods
+  initImageArray(): void {
+    const sourcesSlot = this.shadowRoot?.querySelector(
+      'slot[name="sources"]'
+    ) as HTMLSlotElement;
+    const assignedElements = sourcesSlot?.assignedElements();
+    const dataLightboxElement = assignedElements.find((x) =>
+      x.hasAttribute("data-lightbox")
+    )?.children;
+    if (!dataLightboxElement) return;
+    this.imgArray = Array.from(dataLightboxElement)
+      .filter((el) => el.tagName === "IMG")
+      .map((el) => {
+        const img = el as HTMLImageElement;
+        return { src: img.src, alt: img.alt } as ImgMetadata;
+      });
+  }
 
-    const splide = new _Splide(el, {
+  initializeSplide(splideRef?: HTMLElement, thumbnailRef?: HTMLElement): void {
+    if (!splideRef) return;
+    this.splideInstance = new _Splide(splideRef, {
+      type: "loop",
+      perPage: 1,
+      focus: "center",
       autoplay: true,
     });
 
-    console.log(splide);
-
-    const thumbnails = this.shadowRoot?.querySelectorAll(".thumbnail");
-    let current: Element;
-    if (!thumbnails || thumbnails?.length == 0) return;
-
-    for (let i = 0; i < thumbnails.length; i++) {
-      initThumbnail(thumbnails[i], i);
+    if (!thumbnailRef) {
+      this.splideInstance.mount();
     }
 
-    function initThumbnail(thumbnail: Element, index: number) {
-      thumbnail.addEventListener("click", function () {
-        splide.go(index);
+    const thumbnailArray = thumbnailRef?.children
+      ? Array.from(thumbnailRef?.children)
+      : [];
+
+    thumbnailArray.forEach((thumb, index) => {
+      thumb.addEventListener("click", () => {
+        this.splideInstance?.go(index);
       });
-    }
+    });
 
-    splide.on("mounted move", function () {
-      const thumbnail = thumbnails[splide.index];
-
+    this.splideInstance.on("mounted move", () => {
+      if (!this.splideInstance) return;
+      const thumbnail = thumbnailArray[this.splideInstance.index];
       if (thumbnail) {
-        if (current) {
-          current.classList.remove("is-active");
-        }
-
+        if (this.currentElement)
+          this.currentElement.classList.remove("is-active");
         thumbnail.classList.add("is-active");
-        current = thumbnail;
+        this.currentElement = thumbnail;
       }
     });
 
-    splide.mount();
+    this.splideInstance.mount();
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.initImageArray();
+    this.initializeSplide(this.splideRef);
   }
 }
+
+const splideTemplate = html`
+  ${when(
+    (x: LightboxGallery) => x.imgArray.length > 0,
+    html`
+      <div ${ref("splideRef")} class="splide">
+        <div class="splide__track">
+          <ul class="splide__list">
+            ${repeat(
+              (x) => x.imgArray,
+              html<ImgMetadata>`
+                <li class="splide__slide">
+                  ${(x) => html`<img src="${x.src}" alt="${x.alt}" />`}
+                </li>
+              `
+            )}
+          </ul>
+        </div>
+      </div>
+    `
+  )}
+`;
+
+const thumbnailTemplate = html`
+  ${when(
+    (x: LightboxGallery) => x.imgArray.length > 0,
+    html<LightboxGallery>`
+      <ul ${ref("thumbnailRef")} class="thumbnails">
+        ${repeat(
+          (x) => x.imgArray,
+          html<ImgMetadata>`
+            <li class="thumbnail">
+              ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
+            </li>
+          `
+        )}
+      </ul>
+    `
+  )}
+`;
+
+const template = html<LightboxGallery>`
+  <style>
+    slot[name="sources"] {
+      display: none;
+    }
+  </style>
+  <slot name="sources"></slot>
+  <div class="wrapper">
+    ${splideTemplate} ${thumbnailTemplate}
+    ${(x: LightboxGallery) => x.initializeSplide(x.splideRef, x.thumbnailRef)}
+  </div>
+`;
 
 LightboxGallery.define({
   name: "lightbox-gallery",

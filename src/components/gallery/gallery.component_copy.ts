@@ -18,11 +18,6 @@ const template = html<LightboxGallery>`
   ${(x) =>
     x.isOpen
       ? html`
-          <!-- <style>
-            slot[name="source"] {
-              display: none;
-            }
-          </style> -->
           <slot name="source" ${slotted("slottedSource")}></slot>
           <div class="wrapper">
             <div class="splide"></div>
