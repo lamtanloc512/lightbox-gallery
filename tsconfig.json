@@ -1,10 +1,21 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
-    "lib": ["ESNEXT", "DOM", "DOM.Iterable"],
-    "noEmit": true,
+    "module": "esnext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "allowImportingTsExtensions": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": false,
     "plugins": [
       {
         "name": "ts-lit-plugin",

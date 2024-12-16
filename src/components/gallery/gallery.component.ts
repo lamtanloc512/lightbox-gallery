@@ -16,6 +16,9 @@ import defaultStyle from "./gallery.styles.ts";
 const styles = [
   defaultStyle,
   css`
+    body::-webkit-scrollbar {
+      width: 12px; /* width of the entire scrollbar */
+    }
     .wrapper {
       position: fixed;
       top: 0;
@@ -29,16 +32,6 @@ const styles = [
       z-index: 1;
       flex-direction: column;
     }
-
-    /* .splide {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      background: transparent;
-      border-radius: 10px;
-      overflow: hidden;
-      z-index: 2;
-    } */
 
     .splide__slide {
       text-align: center;
@@ -144,12 +137,21 @@ class LightboxGallery extends FASTElement {
       (el) => el.tagName === "IMG"
     );
 
-    this.imgArray = Array.from(dataLightboxElement)
-      .filter((el) => el.tagName === "IMG")
-      .map((el) => {
-        const img = el as HTMLImageElement;
-        return { src: img.src, alt: img.alt } as ImgMetadata;
+    this.imgArray = this.imageNodes.map((el) => {
+      const img = el as HTMLImageElement;
+      return { src: img.src, alt: img.alt } as ImgMetadata;
+    });
+  }
+
+  initEventForSlotNodes(): void {
+    if (this.imageNodes?.length === 0) return;
+
+    this.imageNodes?.forEach((element: Element, index: number) => {
+      element.addEventListener("click", () => {
+        this.isOpen = true;
+        this.currentIndex = index;
       });
+    });
   }
 
   initializeSplide(
@@ -161,6 +163,7 @@ class LightboxGallery extends FASTElement {
     this.mainSplide = new _Splide(splideRef, {
       type: "fade",
       rewind: true,
+      wheel: true,
       pagination: false,
       arrows: false,
       perPage: 1,
@@ -195,19 +198,8 @@ class LightboxGallery extends FASTElement {
 
     this.mainSplide.go(currentIndex);
     requestAnimationFrame(() => {
-      this.thumbnailSplide.Components.Controller.setIndex(currentIndex);
-      this.thumbnailSplide.Components.Move.jump(currentIndex);
-    });
-  }
-
-  initEventForSlotNodes(): void {
-    if (this.imageNodes?.length === 0) return;
-
-    this.imageNodes?.forEach((element: Element, index: number) => {
-      element.addEventListener("click", () => {
-        this.isOpen = true;
-        this.currentIndex = index;
-      });
+      this.thumbnailSplide?.Components.Controller.setIndex(currentIndex);
+      this.thumbnailSplide?.Components.Move.jump(currentIndex);
     });
   }
 
