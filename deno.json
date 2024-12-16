@@ -4,8 +4,9 @@
     "build": "deno run -A --node-modules-dir npm:vite build"
   },
   "compilerOptions": {
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "experimentalDecorators": true
+    "lib": ["ESNEXT", "DOM", "DOM.Iterable"],
+    "experimentalDecorators": true,
+    "checkJs": true
   },
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.0",
