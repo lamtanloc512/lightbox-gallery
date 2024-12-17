@@ -2,9 +2,12 @@
   "version": "4",
   "specifiers": {
     "npm:@deno/vite-plugin@1": "1.0.2_vite@6.0.3",
+    "npm:@fluentui/web-components@^2.6.1": "2.6.1",
     "npm:@microsoft/fast-element@^2.0.1": "2.0.1",
     "npm:@splidejs/splide@^4.1.4": "4.1.4",
+    "npm:bootstrap-icons@^1.11.3": "1.11.3",
     "npm:lodash@^4.17.21": "4.17.21",
+    "npm:normalize.css@^8.0.1": "8.0.1",
     "npm:vite@*": "6.0.3",
     "npm:vite@^6.0.1": "6.0.3"
   },
@@ -87,8 +90,39 @@
     "@esbuild/win32-x64@0.24.0": {
       "integrity": "sha512-7IAFPrjSQIJrGsK6flwg7NFmwBoSTyF3rl7If0hNUFQU4ilTsEPL6GuMuU9BfIWVVGuRnuIidkSMC+c0Otu8IA=="
     },
+    "@fluentui/web-components@2.6.1": {
+      "integrity": "sha512-coyV+QZBVqcrJbncR2iyL0ZMXGFRJmP+JYUlewkYBt8bgmTMIwKBdUX0cN9S6KUp8JHoC2OSRqL8MYgT3T+YLQ==",
+      "dependencies": [
+        "@microsoft/fast-colors",
+        "@microsoft/fast-element@1.14.0",
+        "@microsoft/fast-foundation",
+        "@microsoft/fast-web-utilities",
+        "tslib@2.8.1"
+      ]
+    },
+    "@microsoft/fast-colors@5.3.1": {
+      "integrity": "sha512-72RZXVfCbwQzvo5sXXkuLXLT7rMeYaSf5r/6ewQiv/trBtqpWRm4DEH2EilHw/iWTBKOXs1qZNQndgUMa5n4LA=="
+    },
+    "@microsoft/fast-element@1.14.0": {
+      "integrity": "sha512-zXvuSOzvsu8zDTy9eby8ix8VqLop2rwKRgp++ZN2kTCsoB3+QJVoaGD2T/Cyso2ViZQFXNpiNCVKfnmxBvmWkQ=="
+    },
     "@microsoft/fast-element@2.0.1": {
       "integrity": "sha512-JRAJS/Ib/Z10xSvTIjWEDsnBvKdJR1J0Q1AGttZnpkceih3GE3QfPgrDGhvIkKVF5raaHRfChIJkLYE2Jw7crQ=="
+    },
+    "@microsoft/fast-foundation@2.50.0": {
+      "integrity": "sha512-8mFYG88Xea1jZf2TI9Lm/jzZ6RWR8x29r24mGuLojNYqIR2Bl8+hnswoV6laApKdCbGMPKnsAL/O68Q0sRxeVg==",
+      "dependencies": [
+        "@microsoft/fast-element@1.14.0",
+        "@microsoft/fast-web-utilities",
+        "tabbable",
+        "tslib@1.14.1"
+      ]
+    },
+    "@microsoft/fast-web-utilities@5.4.1": {
+      "integrity": "sha512-ReWYncndjV3c8D8iq9tp7NcFNc1vbVHvcBFPME2nNFKNbS1XCesYZGlIlf3ot5EmuOXPlrzUHOWzQ2vFpIkqDg==",
+      "dependencies": [
+        "exenv-es6"
+      ]
     },
     "@rollup/rollup-android-arm-eabi@4.28.1": {
       "integrity": "sha512-2aZp8AES04KI2dy3Ss6/MDjXbwBzj+i0GqKtWXgw2/Ma6E4jJvujryO6gJAghIRVz7Vwr9Gtl/8na3nDUKpraQ=="
@@ -153,6 +187,9 @@
     "@types/estree@1.0.6": {
       "integrity": "sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw=="
     },
+    "bootstrap-icons@1.11.3": {
+      "integrity": "sha512-+3lpHrCw/it2/7lBL15VR0HEumaBss0+f/Lb6ZvHISn1mlK83jjFpooTLsMWbIjJMDjDjOExMsTxnXSIT4k4ww=="
+    },
     "esbuild@0.24.0": {
       "integrity": "sha512-FuLPevChGDshgSicjisSooU0cemp/sGXR841D5LHMB7mTVOmsEHcAxaH3irL53+8YDIeVNQEySh4DaYU/iuPqQ==",
       "dependencies": [
@@ -182,6 +219,9 @@
         "@esbuild/win32-x64"
       ]
     },
+    "exenv-es6@1.1.1": {
+      "integrity": "sha512-vlVu3N8d6yEMpMsEm+7sUBAI81aqYYuEvfK0jNqmdb/OPXzzH7QWDDnVjMvDSY47JdHEqx/dfC/q8WkfoTmpGQ=="
+    },
     "fsevents@2.3.3": {
       "integrity": "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="
     },
@@ -190,6 +230,9 @@
     },
     "nanoid@3.3.8": {
       "integrity": "sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w=="
+    },
+    "normalize.css@8.0.1": {
+      "integrity": "sha512-qizSNPO93t1YUuUhP22btGOo3chcvDFqFaj2TRybP0DMxkHOCTYwp3n34fel4a31ORXy4m1Xq0Gyqpb5m33qIg=="
     },
     "picocolors@1.1.1": {
       "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="
@@ -231,6 +274,15 @@
     "source-map-js@1.2.1": {
       "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA=="
     },
+    "tabbable@5.3.3": {
+      "integrity": "sha512-QD9qKY3StfbZqWOPLp0++pOrAVb/HbUi5xCc8cUo4XjP19808oaMiDzn0leBY5mCespIBM0CIZePzZjgzR83kA=="
+    },
+    "tslib@1.14.1": {
+      "integrity": "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
+    },
+    "tslib@2.8.1": {
+      "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
+    },
     "vite@6.0.3": {
       "integrity": "sha512-Cmuo5P0ENTN6HxLSo6IHsjCLn/81Vgrp81oaiFFMRa8gGDj5xEjIcEpf2ZymZtZR8oU0P2JX5WuUp/rlXcHkAw==",
       "dependencies": [
@@ -244,9 +296,12 @@
   "workspace": {
     "dependencies": [
       "npm:@deno/vite-plugin@1",
+      "npm:@fluentui/web-components@^2.6.1",
       "npm:@microsoft/fast-element@^2.0.1",
       "npm:@splidejs/splide@^4.1.4",
+      "npm:bootstrap-icons@^1.11.3",
       "npm:lodash@^4.17.21",
+      "npm:normalize.css@^8.0.1",
       "npm:vite@^6.0.1"
     ]
   }
