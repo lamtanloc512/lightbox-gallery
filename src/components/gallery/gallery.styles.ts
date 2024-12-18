@@ -19,17 +19,30 @@ export default css`
     box-sizing: border-box;
   }
 
-  .splide__slide {
+  .splide__main .splide__slide {
+    display: flex;
+    justify-content: center;
     text-align: center;
+    align-items: center;
   }
 
   .splide__slide img {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
+    cursor: grab;
   }
+
+  .splide__slide img:active {
+    cursor: grabbing;
+  }
+
   .splide__main {
     padding: 0;
+  }
+
+  .splide__main .splide__track {
+    overflow: visible;
   }
   .splide__thumbnail {
     max-width: 100%;
@@ -40,11 +53,12 @@ export default css`
     transform: translate(-50%, -50%);
   }
 
-  .thumbnails {
-    display: flex;
-    margin: 1rem auto 0;
-    padding: 0;
-    justify-content: center;
+  /* .splide__list {
+    transition: all 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  } */
+
+  .splide__list:active {
+    cursor: grabbing;
   }
 
   .thumbnail {
@@ -100,6 +114,9 @@ export default css`
   }
 
   .tool-bar-panel button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .tool-bar-panel button:hover {

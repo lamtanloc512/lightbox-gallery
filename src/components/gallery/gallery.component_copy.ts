@@ -11,9 +11,9 @@ import {
 } from "@microsoft/fast-element";
 import { Splide as _Splide } from "@splidejs/splide";
 import { isEmpty } from "lodash";
-import style from "./gallery.styles.ts";
 import normalizeStyle from "./normalize.style.ts";
 import defaultStyle from "./splide.styles.ts";
+import style from "./gallery.styles.ts";
 
 const styles = [normalizeStyle, defaultStyle, style];
 
@@ -89,14 +89,8 @@ class LightboxGallery extends FASTElement {
   @observable
   scale = 1;
 
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this.initialize();
-    this.initEventForSlotNodes();
-  }
-
   // Methods
-  private initialize(): void {
+  initialize(): void {
     const sourcesSlot = this.shadowRoot?.querySelector(
       'slot[name="sources"]'
     ) as HTMLSlotElement;
@@ -116,7 +110,7 @@ class LightboxGallery extends FASTElement {
     });
   }
 
-  private initEventForSlotNodes(): void {
+  initEventForSlotNodes(): void {
     if (this.imageNodes?.length === 0) return;
 
     this.imageNodes?.forEach((element: Element, index: number) => {
@@ -141,7 +135,6 @@ class LightboxGallery extends FASTElement {
       perPage: 1,
       interval: 3000,
     });
-    this.mainSplide?.on("moved", this.resetPanningState.bind(this));
 
     if (!thumbnailRef) {
       this.mainSplide.mount();
@@ -174,6 +167,7 @@ class LightboxGallery extends FASTElement {
     this.thumbnailSplide.mount();
 
     if (!currentIndex) return;
+
     this.mainSplide.go(currentIndex);
     requestAnimationFrame(() => {
       this.thumbnailSplide?.Components.Controller.setIndex(currentIndex);
@@ -196,33 +190,59 @@ class LightboxGallery extends FASTElement {
     }
   }
 
-  handleZoomIn(): void {
-    if (this.autoPlay) this.mainSplide?.Components.Autoplay.pause();
-    this.mainSplide?.Components.Drag.disable(true);
-    if (!this.viewport) return;
-    const curr = this.viewport;
-    curr.style.cursor = "grab";
-    const newScale = this.scale + 0.25;
-    this.scale = Math.min(newScale, 4);
-    if (this.scale > 1) {
-      curr.style.cursor = "grab";
-      this.setupPanningZoom();
-    }
-  }
-
   handleZoomOut(): void {
-    if (!this.viewport) return;
-    const curr = this.viewport;
-    const newScale = this.scale - 0.25;
+    const currentMainSlideIndex = this.mainSplide?.index;
+    if (!this.mainSplideChildren || currentMainSlideIndex === undefined) return;
+
+    const curr = this.mainSplideChildren[currentMainSlideIndex]
+      .firstElementChild as HTMLElement;
+    if (!curr) return;
+
+    const currentScale = parseFloat(
+      curr.style.transform?.match(/scale\((.*?)\)/)?.[1] || "1"
+    );
+    const newScale = currentScale - 0.5; // Decrease scale by 0.5
+
+    // Apply new scale (min scale 1)
     this.scale = Math.max(newScale, 1);
+
+    curr.style.transform = `scale(${this.scale})`;
+
+    // Reset cursor when back to normal size
     if (this.scale === 1) {
       curr.style.cursor = "default";
     }
   }
 
-  resetZoom(): void {
-    this.resetPanningState();
-    this.cleanupPanningZoom();
+  handleZoomIn(): void {
+    if (this.autoPlay) this.mainSplide?.Components.Autoplay.pause();
+    this.mainSplide?.Components.Drag.disable(true);
+    const currentMainSlideIndex = this.mainSplide?.index;
+    if (!this.mainSplideChildren || currentMainSlideIndex === undefined) return;
+
+    const curr = this.mainSplideChildren[currentMainSlideIndex]
+      .firstElementChild as HTMLElement;
+    if (!curr) return;
+
+    this.viewport = curr;
+
+    // Get current scale or default to 1
+    const currentScale = parseFloat(
+      curr.style.transform?.match(/scale\((.*?)\)/)?.[1] || "1"
+    );
+    const newScale = currentScale + 0.5;
+
+    // Apply new scale (max scale 3)
+    const scale = Math.min(newScale, 3);
+
+    curr.style.transform = `scale(${scale})`;
+    curr.style.transition = "transform 0.3s ease";
+
+    // Optional: Add cursor style to indicate draggable when zoomed
+    if (scale > 1) {
+      curr.style.cursor = "grab";
+      this.setupPanningZoom();
+    }
   }
 
   private setupPanningZoom(): void {
@@ -239,14 +259,6 @@ class LightboxGallery extends FASTElement {
     this.viewport.removeEventListener("pointerup", this.handlePanEnd);
   }
 
-  private resetPanningState() {
-    if (!this.viewport) return;
-    this.isPanning = false;
-    this.viewport.style.cursor = "default";
-    this.offset = { x: 0, y: 0 };
-    this.scale = 1;
-  }
-
   private handlePanStart = (ev: MouseEvent): void => {
     ev.preventDefault();
     this.isPanning = true;
@@ -254,9 +266,6 @@ class LightboxGallery extends FASTElement {
       x: ev.clientX - this.offset.x,
       y: ev.clientY - this.offset.y,
     };
-
-    if (!this.viewport) return;
-    this.viewport.style.transition = "none";
   };
 
   private handlePanMove = (ev: MouseEvent): void => {
@@ -268,13 +277,36 @@ class LightboxGallery extends FASTElement {
     };
   };
 
-  private handlePanEnd = (): void => {
+  private handlePanEnd = (e: MouseEvent): void => {
     this.isPanning = false;
-    if (!this.viewport) return;
-    this.viewport.style.transition =
-      "all 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
   };
 
+  // Reset function for when changing slides or zooming out
+  resetZoom(): void {
+    if (!this.mainSplideChildren) return;
+
+    this.isPanning = false;
+    this.currentX = 0;
+    this.currentY = 0;
+
+    this.mainSplideChildren.forEach((slide) => {
+      const img = slide.firstElementChild as HTMLElement;
+      if (img) {
+        img.style.transform = "translate(0, 0) scale(1)";
+        img.style.cursor = "default";
+      }
+    });
+
+    this.cleanupPanningZoom();
+  }
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.initialize();
+    this.initEventForSlotNodes();
+  }
+
+  // Don't forget to add this to your component cleanup
   override disconnectedCallback(): void {
     super.disconnectedCallback();
   }
@@ -289,13 +321,13 @@ const splideTemplate = html`
           <div class="splide__track">
             <ul
               class="splide__list"
+              ${ref("viewport")}
+              style="transform: translate(${(x) => x.offset.x}px, ${(x) =>
+                x.offset.y}px) scale(${(x) => x.scale})"
               ${children({
                 property: "mainSplideChildren",
                 filter: elements("li"),
               })}
-              ${ref("viewport")}
-              style="transform: translate(${(x) => x.offset.x}px, ${(x) =>
-                x.offset.y}px) scale(${(x) => x.scale})"
             >
               ${repeat(
                 (x: LightboxGallery) => x.imgArray,
