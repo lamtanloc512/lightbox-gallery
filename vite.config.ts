@@ -7,10 +7,18 @@ export default defineConfig({
   build: {
     lib: {
       entry: "src/main.ts",
-      formats: ["es"],
+      name: "LightboxGallery",
+      // formats: ["es"],
+      formats: ["umd", "es", "cjs"],
     },
+    minify: true,
     rollupOptions: {
-      external: /^@microsoft\/fast-(element|components)/,
+      // external: /^@microsoft\/fast-(element|components)/,
+      output: {
+        globals: {
+          lightboxGallery: "LightboxGallery",
+        },
+      },
     },
   },
 });
