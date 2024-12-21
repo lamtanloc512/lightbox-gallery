@@ -152,3 +152,118 @@ export const closeButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
       stroke-linejoin="round"
     ></path>
   </svg>`;
+export const arrowLeft = html` <?xml version="1.0" encoding="UTF-8"?><svg
+    width="24px"
+    height="24px"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    color="#ffffff"
+  >
+    <path
+      d="M13 6L19 12L13 18"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+    <path
+      d="M5 6L11 12L5 18"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+  </svg>`;
+export const arrowRight = html` <?xml version="1.0" encoding="UTF-8"?><svg
+    width="24px"
+    height="24px"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    color="#ffffff"
+  >
+    <path
+      d="M11 6L5 12L11 18"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+    <path
+      d="M19 6L13 12L19 18"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+  </svg>`;
+export const horizontal = html`<?xml version="1.0" encoding="UTF-8"?><svg
+    width="24px"
+    height="24px"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    color="#ffffff"
+  >
+    <path
+      d="M12 22L12 2"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+    <path
+      d="M19 16H5C3.89543 16 3 15.1046 3 14L3 10C3 8.89543 3.89543 8 5 8H19C20.1046 8 21 8.89543 21 10V14C21 15.1046 20.1046 16 19 16Z"
+      stroke="#ffffff"
+      stroke-width="1.5"
+    ></path>
+  </svg>`;
+export const vertical = html` <?xml version="1.0" encoding="UTF-8"?><svg
+    width="24px"
+    height="24px"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    color="#ffffff"
+  >
+    <path
+      d="M22 12L2 12"
+      stroke="#ffffff"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+    <path
+      d="M8 19V5C8 3.89543 8.89543 3 10 3H14C15.1046 3 16 3.89543 16 5V19C16 20.1046 15.1046 21 14 21H10C8.89543 21 8 20.1046 8 19Z"
+      stroke="#ffffff"
+      stroke-width="1.5"
+    ></path>
+  </svg>`;
+
+export const prevSvg = html`<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 40 40"
+  width="40"
+  height="40"
+  focusable="false"
+>
+  <path
+    d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"
+  ></path>
+</svg>`;
+export const nextSvg = html`<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 40 40"
+  width="40"
+  height="40"
+  focusable="false"
+>
+  <path
+    d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"
+  ></path>
+</svg>`;
