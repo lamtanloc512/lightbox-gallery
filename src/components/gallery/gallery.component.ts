@@ -12,7 +12,6 @@ import {
 import { Splide as _Splide } from "@splidejs/splide";
 import { isEmpty } from "lodash";
 import style from "./gallery.styles.ts";
-import normalizeStyle from "./normalize.style.ts";
 import defaultStyle from "./splide.styles.ts";
 import {
   closeButton,
@@ -23,7 +22,7 @@ import {
   zoomOutButton,
 } from "./toolbar.icons.ts";
 
-const styles = [normalizeStyle, defaultStyle, style];
+const styles = [defaultStyle, style];
 
 type ImgMetadata = {
   src: string;
@@ -32,7 +31,7 @@ type ImgMetadata = {
 class LightboxGallery extends FASTElement {
   // Properties
   @attr({ attribute: "is-open", mode: "boolean" })
-  isOpen: boolean = false;
+  isOpen: boolean = true;
 
   @observable
   imgArray: ImgMetadata[] = [];
@@ -100,6 +99,9 @@ class LightboxGallery extends FASTElement {
   @observable
   scale = 1;
 
+  @observable
+  slideshowMaxHeight: number = 0;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.initialize();
@@ -161,8 +163,9 @@ class LightboxGallery extends FASTElement {
 
     this.thumbnailSplide = new _Splide(thumbnailRef, {
       focus: "center",
-      fixedWidth: 100,
-      fixedHeight: 80,
+      fixedHeight: 90,
+      autoWidth: true,
+      arrows: false,
       wheel: true,
       rewind: false,
       pagination: false,
@@ -170,16 +173,21 @@ class LightboxGallery extends FASTElement {
       useIndex: true,
       gap: 5,
       breakpoints: {
-        900: {
-          fixedWidth: 120,
-          fixedHeight: 100,
+        1100: {
+          fixedHeight: 90,
         },
-        600: {
-          fixedWidth: 70,
-          fixedHeight: 60,
+        800: {
+          fixedHeight: 80,
+        },
+        450: {
+          fixedHeight: 70,
         },
       },
     });
+
+    const thumbFixedHeight = this.thumbnailSplide.options.fixedHeight;
+    this.slideshowMaxHeight =
+      window.innerHeight - (thumbFixedHeight as number) * 3;
 
     this.mainSplide.sync(this.thumbnailSplide).mount();
     this.thumbnailSplide.mount();
@@ -309,31 +317,31 @@ const splideTemplate = html`
   ${when(
     (x: LightboxGallery) => x.imgArray.length > 0,
     html`
-      <div class="splide__main">
-        <div ${ref("splideRef")} class="splide">
-          <div class="splide__track">
-            <ul
-              class="splide__list"
-              ${children({
-                property: "mainSplideChildren",
-                filter: elements("li"),
-              })}
-              ${ref("viewport")}
-              style="transform: translate(${(x) => x.offset.x}px, ${(x) =>
-                x.offset.y}px) scale(${(x) => x.scale})"
-            >
-              ${repeat(
-                (x: LightboxGallery) => x.imgArray,
-                html<ImgMetadata>`
-                  ${(x, c) =>
-                    html` <li class="splide__slide">
-                      <img src=${x.src} alt=${x.alt} data-index=${c.index} />
-                    </li>`}
-                `,
-                { positioning: true }
-              )}
-            </ul>
-          </div>
+      <div ${ref("splideRef")} class="splide">
+        <div class="splide__track">
+          <ul
+            class="splide__list"
+            ${children({
+              property: "mainSplideChildren",
+              filter: elements("li"),
+            })}
+            ${ref("viewport")}
+            style="
+              transform: translate(${(x) => x.offset.x}px, ${(x) =>
+              x.offset.y}px) scale(${(x) => x.scale});
+              max-height: ${(x) => x.slideshowMaxHeight}px"
+          >
+            ${repeat(
+              (x: LightboxGallery) => x.imgArray,
+              html<ImgMetadata>`
+                ${(x, c) =>
+                  html` <li class="splide__slide">
+                    <img src=${x.src} alt=${x.alt} data-index=${c.index} />
+                  </li>`}
+              `,
+              { positioning: true }
+            )}
+          </ul>
         </div>
       </div>
     `
@@ -344,26 +352,24 @@ const thumbnailTemplate = html`
   ${when(
     (x: LightboxGallery) => x.imgArray.length > 0,
     html<LightboxGallery>`
-      <div class="splide__thumbnail">
-        <div ${ref("thumbnailRef")} class="splide">
-          <div class="splide__track">
-            <ul
-              class="splide__list"
-              ${children({
-                property: "thumbnailChildren",
-                filter: elements("li"),
-              })}
-            >
-              ${repeat(
-                (x) => x.imgArray,
-                html<ImgMetadata>`
-                  <li class="splide__slide thumbnail">
-                    ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
-                  </li>
-                `
-              )}
-            </ul>
-          </div>
+      <div ${ref("thumbnailRef")} class="splide">
+        <div class="splide__track">
+          <ul
+            class="splide__list"
+            ${children({
+              property: "thumbnailChildren",
+              filter: elements("li"),
+            })}
+          >
+            ${repeat(
+              (x) => x.imgArray,
+              html<ImgMetadata>`
+                <li class="splide__slide lb--thumbnail--item">
+                  ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
+                </li>
+              `
+            )}
+          </ul>
         </div>
       </div>
     `
@@ -372,36 +378,27 @@ const thumbnailTemplate = html`
 
 const toolbarTemplate = html<LightboxGallery>` ${when(
   (x: LightboxGallery) => x.imgArray.length > 0,
-  html`<div class="tool-bar-nav">
-    <div class="tool-bar-panel">
-      <button @click=${(x) => x.handleZoomIn()} title="Zoom In">
-        ${zoomInButton}
-      </button>
-      <button @click=${(x) => x.handleZoomOut()} title="Zoom Out">
-        ${zoomOutButton}
-      </button>
-      <button
-        @click=${(x: LightboxGallery) => x.resetZoom()}
-        title="Reset Zoom"
-      >
-        ${resetZoomButton}
-      </button>
-      <button @click=${(x) => x.handleAutoPlay()} title="Auto Play">
-        ${when(
-          (x) => x.autoPlay,
-          html` ${pauseButton} `,
-          html` ${playButton} `
-        )}
-      </button>
-      <button
-        class="btn-close-lightbox"
-        @click=${(x) => x.closeLightbox()}
-        title="Close"
-      >
-        ${closeButton}
-      </button>
-    </div>
-  </div>`
+  html`
+    <button @click=${(x) => x.handleZoomIn()} title="Zoom In">
+      ${zoomInButton}
+    </button>
+    <button @click=${(x) => x.handleZoomOut()} title="Zoom Out">
+      ${zoomOutButton}
+    </button>
+    <button @click=${(x: LightboxGallery) => x.resetZoom()} title="Reset Zoom">
+      ${resetZoomButton}
+    </button>
+    <button @click=${(x) => x.handleAutoPlay()} title="Auto Play">
+      ${when((x) => x.autoPlay, html` ${pauseButton} `, html` ${playButton} `)}
+    </button>
+    <button
+      class="btn-close-lightbox"
+      @click=${(x) => x.closeLightbox()}
+      title="Close"
+    >
+      ${closeButton}
+    </button>
+  `
 )}`;
 
 const template = html<LightboxGallery>`
@@ -409,8 +406,10 @@ const template = html<LightboxGallery>`
     <slot name="sources"></slot>
     ${when(
       (x) => x.isOpen,
-      html` <div class="wrapper">
-        ${toolbarTemplate} ${splideTemplate} ${thumbnailTemplate}
+      html` <div class="lb--container">
+        <div class="lb--toolbar">${toolbarTemplate}</div>
+        <div class="lb--slideshow">${splideTemplate}</div>
+        <div class="lb--thumbnail">${thumbnailTemplate}</div>
         ${(x: LightboxGallery) =>
           x.initializeSplide(x.splideRef, x.thumbnailRef, x.currentIndex)}
       </div>`

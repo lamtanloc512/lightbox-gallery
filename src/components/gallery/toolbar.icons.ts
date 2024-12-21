@@ -67,38 +67,31 @@ export const zoomOutButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
     ></path>
   </svg>`;
 export const resetZoomButton = html`<?xml version="1.0" encoding="UTF-8"?><svg
-    width="20"
-    height="20"
+    width="20px"
+    height="20px"
     stroke-width="1.5"
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    color="#ffffffff"
+    color="#ffffff"
   >
     <path
-      d="M21.1679 8C19.6247 4.46819 16.1006 2 11.9999 2C6.81459 2 2.55104 5.94668 2.04932 11"
-      stroke="#ffffffff"
+      d="M6.67742 20.5673C2.53141 18.0212 0.758026 12.7584 2.71678 8.1439C4.87472 3.0601 10.7453 0.68822 15.8291 2.84617C20.9129 5.00412 23.2848 10.8747 21.1269 15.9585C20.2837 17.945 18.8736 19.5174 17.1651 20.5673"
+      stroke="#ffffff"
       stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
     ></path>
     <path
-      d="M17 8H21.4C21.7314 8 22 7.73137 22 7.4V3"
-      stroke="#ffffffff"
+      d="M17 16V20.4C17 20.7314 17.2686 21 17.6 21H22"
+      stroke="#ffffff"
       stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"
     ></path>
     <path
-      d="M2.88146 16C4.42458 19.5318 7.94874 22 12.0494 22C17.2347 22 21.4983 18.0533 22 13"
-      stroke="#ffffffff"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    ></path>
-    <path
-      d="M7.04932 16H2.64932C2.31795 16 2.04932 16.2686 2.04932 16.6V21"
-      stroke="#ffffffff"
+      d="M12 22.01L12.01 21.9989"
+      stroke="#ffffff"
       stroke-width="1.5"
       stroke-linecap="round"
       stroke-linejoin="round"

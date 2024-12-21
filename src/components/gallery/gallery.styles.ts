@@ -1,67 +1,78 @@
 import { css } from "@microsoft/fast-element";
 
 export default css`
-  body::-webkit-scrollbar {
-    width: 12px; /* width of the entire scrollbar */
-  }
-  .wrapper {
+  :host {
     position: fixed;
     top: 0;
     left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1000000000;
+    touch-action: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+  .lb--container {
+    position: fixed;
     width: 100%;
     height: 100%;
-    background-color: rgb(0 0 0 / 94%);
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.98);
+  }
+
+  .lb--slideshow {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1;
-    flex-direction: column;
-    box-sizing: border-box;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
-  .splide__main .splide__slide {
+  .lb--slideshow .splide__track {
+    overflow: visible;
+  }
+
+  .lb--slideshow .splide__slide {
     display: flex;
     justify-content: center;
     text-align: center;
     align-items: center;
   }
-
-  .splide__slide img {
+  .lb--slideshow .splide__slide img {
     max-width: 100%;
     max-height: 100%;
-    object-fit: cover;
-    cursor: grab;
+    object-fit: contain;
   }
-
-  .splide__slide img:active {
-    cursor: grabbing;
-  }
-
-  .splide__main {
-    padding: 0;
-  }
-
-  .splide__main .splide__track {
-    overflow: visible;
-  }
-  .splide__thumbnail {
-    max-width: 100%;
-    overflow-x: hidden;
-    position: absolute;
+  .lb--thumbnail {
+    position: fixed;
     bottom: 0;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-x: auto;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-
-  /* .splide__list {
-    transition: all 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  } */
-
-  .splide__list:active {
-    cursor: grabbing;
+  .lb--thumbnail .splide__slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
-
-  .thumbnail {
+  .lb--thumbnail .lb--thumbnail--item {
     overflow: hidden;
     list-style: none;
     margin: 0 0.2rem;
@@ -70,59 +81,38 @@ export default css`
     border-radius: 8px;
     outline: 2px solid white;
     outline-offset: -2px;
+    transition: ease 0.2s;
     opacity: 0.5;
   }
-
-  .thumbnail img {
-    width: 100%;
-    height: auto;
-  }
-
-  .thumbnail.is-active {
-    border-radius: 8px;
-    outline: 3px solid red;
-    outline-offset: -2px;
+  .lb--thumbnail .lb--thumbnail--item.is-active {
     opacity: 1;
   }
-
-  .tool-bar-nav {
-    height: 45px;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  .tool-bar-panel {
-    position: absolute;
-    z-index: 3;
-    right: 0;
-    top: 0;
-    height: 100%;
+  .lb--toolbar {
     display: flex;
-    background: rgba(35, 35, 35, 0.65);
+    justify-content: end;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000000000;
   }
 
-  .tool-bar-panel button {
-    margin: 0;
-    height: 100%;
+  .lb--toolbar button {
     width: 45px;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    vertical-align: middle;
-    text-align: center;
-  }
-
-  .tool-bar-panel button {
+    height: 45px;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    border: none;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #1b1b1b78;
   }
 
-  .tool-bar-panel button:hover {
-    background-color: #57555578;
+  .lb--toolbar button:hover {
+    background-color: #3d3d3dda;
   }
-  .tool-bar-panel button:active {
+  .lb--toolbar button:active {
     background-color: #97969678;
   }
 `;
