@@ -16,7 +16,8 @@
   "compilerOptions": {
     "lib": ["ESNEXT", "DOM", "DOM.Iterable"],
     "checkJs": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
   },
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
