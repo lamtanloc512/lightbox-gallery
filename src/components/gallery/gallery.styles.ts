@@ -36,10 +36,6 @@ const componentStyles: ElementStyles = css`
     --lb-z-index: 1000000000;
   }
 
-  :host(:not([is-open])) {
-    display: none;
-  }
-
   :host([is-open]) {
     position: fixed;
     top: 0;

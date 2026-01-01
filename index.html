@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lightbox Plugin</title>
   <link rel="stylesheet" href="./src/index.css" />
-  <script type="module" src="https://esm.sh/jsr/@ethandev512/lightbox-gallery"></script>
+
   <style>
     .grid {
       display: grid;
@@ -26,7 +26,7 @@
 </head>
 
 <body>
-  <lightbox-gallery id="lb2" is-open="false" data-lightbox>
+  <lightbox-gallery id="lb2" is-open="true" data-lightbox>
     <div class="grid" slot="sources" data-lightbox>
       <img src="https://fslightbox.com/img/sky.jpeg" alt="" />
       <img src="https://fslightbox.com/img/child.jpeg" alt="" />
@@ -46,6 +46,7 @@
       <img src="https://fslightbox.com/img/butterflies.jpeg" alt="" />
     </div>
   </lightbox-gallery>
+  <script type="module" src="./dist/lightbox-gallery.js"></script>
 </body>
 
 </html>

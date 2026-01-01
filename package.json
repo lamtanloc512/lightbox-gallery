@@ -1,6 +1,6 @@
 {
   "name": "@ethandev512/lightbox-gallery",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A modern, customizable image lightbox web component built with FAST Element and Splide.js.",
   "type": "module",
   "files": [
