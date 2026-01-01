@@ -4,7 +4,7 @@
  */
 
 import { Splide, Options } from "@splidejs/splide";
-import type { ThumbnailSplideOptions } from "../types";
+import type { ThumbnailSplideOptions } from "../types.ts";
 
 export interface SlideshowControllerOptions {
   /** Enable arrows navigation */

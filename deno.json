@@ -1,4 +1,8 @@
 {
+  "name": "@ethandev512/lightbox-gallery",
+  "version": "0.1.0",
+  "license": "MIT",
+  "exports": "./mod.ts",
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
     "build": "deno run -A --node-modules-dir npm:vite build",
@@ -6,7 +10,8 @@
   },
   "compilerOptions": {
     "lib": ["ESNEXT", "DOM", "DOM.Iterable"],
-    "checkJs": true
+    "checkJs": true,
+    "experimentalDecorators": true
   },
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",

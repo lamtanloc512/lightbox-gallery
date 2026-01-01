@@ -11,6 +11,7 @@ import {
   children,
   elements,
 } from "@microsoft/fast-element";
+import type { ViewTemplate } from "@microsoft/fast-element";
 import type { LightboxGallery } from "./gallery.component.ts";
 import type { ImgMetadata } from "./types.ts";
 import {
@@ -31,7 +32,7 @@ import {
 /**
  * Template for the main slideshow
  */
-export const splideTemplate = html<LightboxGallery>`
+export const splideTemplate: ViewTemplate<LightboxGallery> = html<LightboxGallery>`
   ${when(
     (x) => x.imgArray.length > 0,
     html`
@@ -80,7 +81,7 @@ export const splideTemplate = html<LightboxGallery>`
 /**
  * Template for horizontal thumbnail navigation
  */
-export const thumbnailTemplate = html<LightboxGallery>`
+export const thumbnailTemplate: ViewTemplate<LightboxGallery> = html<LightboxGallery>`
   ${when(
     (x) => x.imgArray.length > 0,
     html<LightboxGallery>`
@@ -111,7 +112,7 @@ export const thumbnailTemplate = html<LightboxGallery>`
 /**
  * Template for vertical thumbnail navigation
  */
-export const thumbnailTemplateVertical = html<LightboxGallery>`
+export const thumbnailTemplateVertical: ViewTemplate<LightboxGallery> = html<LightboxGallery>`
   ${when(
     (x) => x.imgArray.length > 0,
     html<LightboxGallery>`
@@ -153,7 +154,7 @@ export const thumbnailTemplateVertical = html<LightboxGallery>`
 /**
  * Template for the toolbar with controls
  */
-export const toolbarTemplate = html<LightboxGallery>` ${when(
+export const toolbarTemplate: ViewTemplate<LightboxGallery> = html<LightboxGallery>` ${when(
   (x) => x.imgArray.length > 0,
   html`
     ${(x) =>
@@ -216,7 +217,7 @@ export const toolbarTemplate = html<LightboxGallery>` ${when(
 /**
  * Main template for the LightboxGallery component
  */
-export const galleryTemplate = html<LightboxGallery>`
+export const galleryTemplate: ViewTemplate<LightboxGallery> = html<LightboxGallery>`
   <template>
     <div style="display: none">
       <slot name="sources"></slot>

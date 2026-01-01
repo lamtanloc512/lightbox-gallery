@@ -3,7 +3,7 @@
  * @module controllers/zoom
  */
 
-import type { Position, ZoomState } from "../types";
+import type { Position, ZoomState } from "../types.ts";
 
 export interface ZoomControllerHost {
   viewport?: HTMLElement;

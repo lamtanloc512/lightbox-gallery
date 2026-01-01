@@ -21,10 +21,10 @@ import {
 } from "@microsoft/fast-element";
 import { isEmpty } from "lodash";
 
-import { galleryTemplate } from "./gallery.template";
-import { galleryStyles } from "./gallery.styles";
-import { ZoomController, SlideshowController } from "./controllers";
-import type { ImgMetadata, Position } from "./types";
+import { galleryTemplate } from "./gallery.template.ts";
+import { galleryStyles } from "./gallery.styles.ts";
+import { ZoomController, SlideshowController } from "./controllers/index.ts";
+import type { ImgMetadata, Position } from "./types.ts";
 
 /**
  * LightboxGallery Web Component
@@ -237,7 +237,7 @@ export class LightboxGallery extends FASTElement {
 
     // Calculate max height
     const thumbHeight = this.slideshowController.getThumbnailHeight();
-    this.slideshowMaxHeight = window.innerHeight - thumbHeight * 3;
+    this.slideshowMaxHeight = globalThis.innerHeight - thumbHeight * 3;
 
     // Initialize zoom controller
     this.zoomController = new ZoomController(this);

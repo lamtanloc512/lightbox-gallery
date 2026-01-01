@@ -19,7 +19,7 @@
  */
 
 // Re-export everything from gallery component
-export * from "./components/gallery";
+export * from "./components/gallery/index.ts";
 
 // Auto-register the component by importing it
-import "./components/gallery/gallery.component";
+import "./components/gallery/gallery.component.ts";

@@ -1,6 +1,6 @@
-import { css } from "@microsoft/fast-element";
+import { css, type ElementStyles } from "@microsoft/fast-element";
 
-export default css`
+const defaultStyle: ElementStyles = css`
   .splide__container {
     box-sizing: border-box;
     position: relative;
@@ -310,3 +310,5 @@ export default css`
     top: 0;
   }
 `;
+
+export default defaultStyle;

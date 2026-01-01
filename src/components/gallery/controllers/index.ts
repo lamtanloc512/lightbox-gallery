@@ -3,8 +3,8 @@
  * @module controllers
  */
 
-export { ZoomController, type ZoomControllerHost } from "./zoom.controller";
+export { ZoomController, type ZoomControllerHost } from "./zoom.controller.ts";
 export {
   SlideshowController,
   type SlideshowControllerOptions,
-} from "./slideshow.controller";
+} from "./slideshow.controller.ts";

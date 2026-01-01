@@ -1,6 +1,6 @@
-import { html } from "@microsoft/fast-element";
+import { html, type ViewTemplate } from "@microsoft/fast-element";
 
-export const zoomInButton = html`
+export const zoomInButton: ViewTemplate = html`
   <?xml version="1.0" encoding="UTF-8"?>
   <svg
     width="24px"
@@ -35,7 +35,7 @@ export const zoomInButton = html`
   </svg>
 `;
 
-export const zoomOutButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
+export const zoomOutButton: ViewTemplate = html` <?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     viewBox="0 0 24 24"
@@ -66,7 +66,7 @@ export const zoomOutButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
       stroke-linejoin="round"
     ></path>
   </svg>`;
-export const resetZoomButton = html`<?xml version="1.0" encoding="UTF-8"?><svg
+export const resetZoomButton: ViewTemplate = html`<?xml version="1.0" encoding="UTF-8"?><svg
     width="20px"
     height="20px"
     stroke-width="1.5"
@@ -98,7 +98,7 @@ export const resetZoomButton = html`<?xml version="1.0" encoding="UTF-8"?><svg
     ></path>
   </svg>`;
 
-export const pauseButton = html`<?xml version="1.0" encoding="UTF-8"?><svg
+export const pauseButton: ViewTemplate = html`<?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     stroke-width="1.5"
@@ -118,7 +118,7 @@ export const pauseButton = html`<?xml version="1.0" encoding="UTF-8"?><svg
       stroke-width="1.5"
     ></path>
   </svg>`;
-export const playButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
+export const playButton: ViewTemplate = html` <?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     stroke-width="1.5"
@@ -135,7 +135,7 @@ export const playButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
       stroke-linejoin="round"
     ></path>
   </svg>`;
-export const closeButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
+export const closeButton: ViewTemplate = html` <?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     stroke-width="1.5"
@@ -152,7 +152,7 @@ export const closeButton = html` <?xml version="1.0" encoding="UTF-8"?><svg
       stroke-linejoin="round"
     ></path>
   </svg>`;
-export const arrowLeft = html` <?xml version="1.0" encoding="UTF-8"?><svg
+export const arrowLeft: ViewTemplate = html` <?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     viewBox="0 0 24 24"
@@ -176,7 +176,7 @@ export const arrowLeft = html` <?xml version="1.0" encoding="UTF-8"?><svg
       stroke-linejoin="round"
     ></path>
   </svg>`;
-export const arrowRight = html` <?xml version="1.0" encoding="UTF-8"?><svg
+export const arrowRight: ViewTemplate = html` <?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     viewBox="0 0 24 24"
@@ -200,7 +200,7 @@ export const arrowRight = html` <?xml version="1.0" encoding="UTF-8"?><svg
       stroke-linejoin="round"
     ></path>
   </svg>`;
-export const horizontal = html`<?xml version="1.0" encoding="UTF-8"?><svg
+export const horizontal: ViewTemplate = html`<?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     viewBox="0 0 24 24"
@@ -222,7 +222,7 @@ export const horizontal = html`<?xml version="1.0" encoding="UTF-8"?><svg
       stroke-width="1.5"
     ></path>
   </svg>`;
-export const vertical = html` <?xml version="1.0" encoding="UTF-8"?><svg
+export const vertical: ViewTemplate = html` <?xml version="1.0" encoding="UTF-8"?><svg
     width="24px"
     height="24px"
     viewBox="0 0 24 24"
@@ -245,7 +245,7 @@ export const vertical = html` <?xml version="1.0" encoding="UTF-8"?><svg
     ></path>
   </svg>`;
 
-export const prevSvg = html`<svg
+export const prevSvg: ViewTemplate = html`<svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 40 40"
   width="40"
@@ -256,7 +256,7 @@ export const prevSvg = html`<svg
     d="m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z"
   ></path>
 </svg>`;
-export const nextSvg = html`<svg
+export const nextSvg: ViewTemplate = html`<svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 40 40"
   width="40"

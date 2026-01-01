@@ -3,7 +3,7 @@
  * @module gallery.styles
  */
 
-import { css } from "@microsoft/fast-element";
+import { css, type ElementStyles } from "@microsoft/fast-element";
 import defaultStyle from "./splide.styles.ts";
 
 /**
@@ -20,7 +20,7 @@ import defaultStyle from "./splide.styles.ts";
  * --lb-arrow-hover-bg: Arrow button hover background
  * --lb-z-index: Z-index of the lightbox overlay
  */
-const componentStyles = css`
+const componentStyles: ElementStyles = css`
   :host {
     /* CSS Custom Properties with defaults */
     --lb-backdrop-color: rgba(0, 0, 0, 0.6);
@@ -147,6 +147,7 @@ const componentStyles = css`
     outline: 2px solid white;
     outline-offset: -2px;
     transition: opacity 0.2s ease;
+    aspect-ratio: 1 / 1;
   }
 
   .lb--thumbnail .lb--thumbnail--item.is-active,

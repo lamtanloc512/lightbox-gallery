@@ -27,10 +27,10 @@
  */
 
 // Main component
-export { LightboxGallery } from "./gallery.component";
+export { LightboxGallery } from "./gallery.component.ts";
 
 // Styles (for custom styling/theming)
-export { galleryStyles } from "./gallery.styles";
+export { galleryStyles } from "./gallery.styles.ts";
 
 // Templates (for advanced customization)
 export {
@@ -39,7 +39,7 @@ export {
   thumbnailTemplate,
   thumbnailTemplateVertical,
   toolbarTemplate,
-} from "./gallery.template";
+} from "./gallery.template.ts";
 
 // Types
 export type {
@@ -50,7 +50,7 @@ export type {
   SlideChangeEventDetail,
   Position,
   ZoomState,
-} from "./types";
+} from "./types.ts";
 
 // Controllers (for advanced usage)
 export {
@@ -58,4 +58,4 @@ export {
   SlideshowController,
   type ZoomControllerHost,
   type SlideshowControllerOptions,
-} from "./controllers";
+} from "./controllers/index.ts";

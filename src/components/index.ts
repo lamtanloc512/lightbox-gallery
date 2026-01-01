@@ -3,4 +3,4 @@
  * @module components
  */
 
-export * from "./gallery";
+export * from "./gallery/index.ts";
