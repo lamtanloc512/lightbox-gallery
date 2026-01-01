@@ -5,6 +5,7 @@
     "npm:@fluentui/web-components@^2.6.1": "2.6.1",
     "npm:@microsoft/fast-element@^2.9.1": "2.9.1",
     "npm:@splidejs/splide@^4.1.4": "4.1.4",
+    "npm:@types/lodash@^4.17.21": "4.17.21",
     "npm:lodash@^4.17.21": "4.17.21",
     "npm:normalize.css@^8.0.1": "8.0.1",
     "npm:vite@*": "6.4.1_picomatch@4.0.3",
@@ -297,6 +298,9 @@
     "@types/estree@1.0.8": {
       "integrity": "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="
     },
+    "@types/lodash@4.17.21": {
+      "integrity": "sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ=="
+    },
     "esbuild@0.25.12": {
       "integrity": "sha512-bbPBYYrtZbkt6Os6FiTLCTFxvq4tt3JKall1vRwshA3fdVztsLAatFaZobhkBC8/BrPetoa0oksYoKXoG4ryJg==",
       "optionalDependencies": [
@@ -451,6 +455,7 @@
       "npm:@fluentui/web-components@^2.6.1",
       "npm:@microsoft/fast-element@^2.9.1",
       "npm:@splidejs/splide@^4.1.4",
+      "npm:@types/lodash@^4.17.21",
       "npm:lodash@^4.17.21",
       "npm:normalize.css@^8.0.1",
       "npm:vite@^6.4.1"
