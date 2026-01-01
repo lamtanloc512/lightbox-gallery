@@ -29,14 +29,21 @@ deno add npm:lightbox-gallery
 
 ### Usage
 
-```html
-<!-- Import the component -->
-<script
-  type="module"
-  src="./node_modules/lightbox-gallery/dist/main.mjs"
-></script>
+**1. Import the component**
 
-<!-- Use it in your HTML -->
+```typescript
+// Auto-register the component
+import "lightbox-gallery";
+
+// Or import with types
+import { LightboxGallery, type ImgMetadata } from "lightbox-gallery";
+```
+
+**2. Add markup**
+
+Add images inside a container with `slot="sources"` and `data-lightbox` attribute:
+
+```html
 <lightbox-gallery>
   <div slot="sources" data-lightbox>
     <img src="image1.jpg" alt="Description 1" />
@@ -46,43 +53,109 @@ deno add npm:lightbox-gallery
 </lightbox-gallery>
 ```
 
-### TypeScript
+**3. Open programmatically**
 
 ```typescript
-import { LightboxGallery, type ImgMetadata } from "lightbox-gallery";
-
-// Get reference to the component
 const gallery = document.querySelector("lightbox-gallery") as LightboxGallery;
 
-// Open programmatically
+// Open at specific index
 gallery.openLightbox(0);
-
-// Listen to events
-gallery.addEventListener("lightbox-open", (e) => {
-  console.log("Opened at index:", e.detail.index);
-});
 ```
+
+## ⚙️ Configuration
+
+### Attributes
+
+| Attribute | Type      | Default | Description                  |
+| --------- | --------- | ------- | ---------------------------- |
+| `is-open` | `boolean` | `false` | Controls lightbox visibility |
+
+### Properties (API)
+
+Get a reference to the element to access these properties:
+
+| Property     | Type            | Description              |
+| ------------ | --------------- | ------------------------ |
+| `isOpen`     | `boolean`       | Whether lightbox is open |
+| `isVertical` | `boolean`       | Vertical layout mode     |
+| `autoPlay`   | `boolean`       | Autoplay slideshow state |
+| `scale`      | `number`        | Current zoom scale       |
+| `imgArray`   | `ImgMetadata[]` | Array of images          |
+
+### Methods
+
+| Method                | Parameters      | Description                |
+| --------------------- | --------------- | -------------------------- |
+| `openLightbox(index)` | `index: number` | Open at specific index     |
+| `closeLightbox()`     | -               | Close the lightbox         |
+| `toggleLayout()`      | -               | Toggle horizontal/vertical |
+| `handleZoomIn()`      | -               | Zoom in                    |
+| `handleZoomOut()`     | -               | Zoom out                   |
+| `resetZoom()`         | -               | Reset zoom to 1x           |
+| `handleAutoPlay()`    | -               | Toggle autoplay            |
 
 ## 🎨 Theming
 
-Customize with CSS custom properties:
+Customize the lightbox appearance using CSS custom properties:
 
 ```css
 lightbox-gallery {
+  /* Backdrop */
   --lb-backdrop-color: rgba(0, 0, 0, 0.98);
+
+  /* Toolbar */
   --lb-toolbar-bg: #1b1b1b78;
+  --lb-toolbar-hover-bg: #3d3d3dda;
+  --lb-toolbar-active-bg: #97969678;
+
+  /* Thumbnails */
+  --lb-thumbnail-opacity: 0.5;
+  --lb-thumbnail-active-opacity: 1;
   --lb-thumbnail-border-radius: 8px;
+
+  /* Navigation Arrows */
+  --lb-arrow-bg: #b1b1b178;
+  --lb-arrow-hover-bg: #3d3d3dda;
+  --lb-arrow-active-bg: #c4c4c478;
+
+  /* Z-Index */
+  --lb-z-index: 1000000000;
 }
 ```
 
-## 📖 Documentation
+## 📡 Events
 
-See the [full documentation](./docs/USAGE.md) for:
+The component emits custom events you can listen to:
 
-- Complete API reference
-- Event handling
-- Advanced customization
-- More examples
+```typescript
+const lightbox = document.querySelector("lightbox-gallery");
+
+// When lightbox opens
+lightbox.addEventListener("lightbox-open", (e: CustomEvent) => {
+  console.log("Opened at index:", e.detail.index);
+});
+
+// When slide changes
+lightbox.addEventListener("slide-change", (e: CustomEvent) => {
+  console.log("Current slide:", e.detail.currentIndex);
+});
+```
+
+| Event            | Detail                                            | Description                   |
+| ---------------- | ------------------------------------------------- | ----------------------------- |
+| `lightbox-open`  | `{ index: number }`                               | Fired when lightbox opens     |
+| `lightbox-close` | `void`                                            | Fired when lightbox closes    |
+| `slide-change`   | `{ previousIndex: number, currentIndex: number }` | Fired when slide changes      |
+| `zoom-change`    | `{ scale: number }`                               | Fired when zoom level changes |
+
+## ⌨️ Keyboard Shortcuts
+
+| Key       | Action                |
+| --------- | --------------------- |
+| `←` / `→` | Previous / Next image |
+| `Escape`  | Close lightbox        |
+| `+` / `-` | Zoom in / out         |
+| `Space`   | Toggle autoplay       |
 
 ## 🛠️ Development
 
@@ -97,27 +170,6 @@ deno task build
 
 # Preview production build
 deno task preview
-```
-
-## 📁 Project Structure
-
-```
-lightbox-gallery/
-├── src/
-│   ├── components/
-│   │   └── gallery/
-│   │       ├── gallery.component.ts   # Main component
-│   │       ├── gallery.template.ts    # HTML templates
-│   │       ├── gallery.styles.ts      # CSS styles
-│   │       ├── types.ts               # TypeScript types
-│   │       └── controllers/           # Logic controllers
-│   │           ├── zoom.controller.ts
-│   │           └── slideshow.controller.ts
-│   ├── service/                       # DI services
-│   └── main.ts                        # Entry point
-├── examples/                          # Example components
-├── docs/                              # Documentation
-└── dist/                              # Built files
 ```
 
 ## 📄 License

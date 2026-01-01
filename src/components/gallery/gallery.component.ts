@@ -249,6 +249,12 @@ export class LightboxGallery extends FASTElement {
 
   /**
    * Open the lightbox at a specific index
+   * @param index - The zero-based index of the image to open (default: 0)
+   * @example
+   * ```ts
+   * const gallery = document.querySelector('lightbox-gallery');
+   * gallery.openLightbox(2); // Open 3rd image
+   * ```
    */
   openLightbox(index: number = 0): void {
     this.isOpen = true;
@@ -258,6 +264,10 @@ export class LightboxGallery extends FASTElement {
 
   /**
    * Close the lightbox
+   * @example
+   * ```ts
+   * gallery.closeLightbox();
+   * ```
    */
   closeLightbox(): void {
     this.isOpen = false;
