@@ -49,99 +49,83 @@ import type { ImgMetadata, Position } from "./types.ts";
   styles: galleryStyles,
 })
 export class LightboxGallery extends FASTElement {
-  // ========================================
-  // Public Attributes
-  // ========================================
-
-  /**
-   * Whether the lightbox is currently open
-   * @attr is-open
-   */
   @attr({ attribute: "is-open", mode: "boolean" })
-  isOpen: boolean = false;
+  isOpen!: boolean;
 
-  // ========================================
-  // Observable State
-  // ========================================
+  @attr({ attribute: "is-vertical", mode: "boolean" })
+  isVertical!: boolean;
 
-  /** Use vertical layout (thumbnails on the right) */
   @observable
-  isVertical: boolean = false;
+  imgArray!: ImgMetadata[];
 
-  /** Array of image metadata extracted from slot */
   @observable
-  imgArray: ImgMetadata[] = [];
+  splideRef!: HTMLElement;
 
-  /** Reference to main Splide container */
   @observable
-  splideRef?: HTMLElement;
+  thumbnailRef!: HTMLElement;
 
-  /** Reference to horizontal thumbnail container */
   @observable
-  thumbnailRef?: HTMLElement;
+  collapseThumbnailVertical!: boolean;
 
-  /** Whether vertical thumbnail sidebar is collapsed */
   @observable
-  collapseThumbnailVertical: boolean = false;
+  thumbnailRefVertical!: HTMLElement;
 
-  /** Reference to vertical thumbnail container */
   @observable
-  thumbnailRefVertical?: HTMLElement;
+  thumbnailChildren!: HTMLElement[];
 
-  /** Children elements of thumbnail slider */
   @observable
-  thumbnailChildren?: HTMLElement[] = [];
+  mainSplideChildren!: HTMLElement[];
 
-  /** Children elements of main slider */
   @observable
-  mainSplideChildren?: HTMLElement[] = [];
+  currentIndex!: number;
 
-  /** Currently active slide index */
   @observable
-  currentIndex?: number;
+  currentThumbnail!: HTMLElement;
 
-  /** Reference to current thumbnail element */
   @observable
-  currentThumbnail?: HTMLElement;
+  imageNodes!: Element[];
 
-  /** Array of image nodes from slot */
   @observable
-  imageNodes?: Element[] = [];
+  autoPlay!: boolean;
 
-  /** Autoplay enabled state */
   @observable
-  autoPlay: boolean = false;
+  viewport!: HTMLElement;
 
-  /** Reference to the viewport element for zoom/pan */
   @observable
-  viewport?: HTMLElement;
+  offset!: Position;
 
-  /** Current pan offset */
   @observable
-  offset: Position = { x: 0, y: 0 };
+  scale!: number;
 
-  /** Current zoom scale */
   @observable
-  scale: number = 1;
+  slideshowMaxHeight!: number;
 
-  /** Maximum height for slideshow container */
   @observable
-  slideshowMaxHeight: number = 0;
+  isPanning!: boolean;
 
-  /** Whether panning is in progress */
   @observable
-  isPanning: boolean = false;
-
-  /** Whether zoom is active */
-  @observable
-  isZoomming: boolean = false;
-
-  // ========================================
-  // Controllers
-  // ========================================
+  isZoomming!: boolean;
 
   private zoomController?: ZoomController;
   private slideshowController?: SlideshowController;
+
+  constructor() {
+    super();
+    this.isOpen = false;
+    this.isVertical = false;
+    this.imgArray = [];
+    this.collapseThumbnailVertical = false;
+    this.thumbnailChildren = [];
+    this.mainSplideChildren = [];
+    this.currentIndex = 0;
+    this.imageNodes = [];
+    this.autoPlay = false;
+    this.offset = { x: 0, y: 0 };
+    this.scale = 1;
+    this.slideshowMaxHeight = 0;
+    this.isPanning = false;
+    this.isZoomming = false;
+  }
 
   // ========================================
   // Lifecycle Hooks

@@ -23,10 +23,13 @@
       object-fit: contain;
     }
   </style>
+  <script type="module" src="./dist/lightbox-gallery.js"></script>
+
 </head>
 
 <body>
-  <lightbox-gallery id="lb2" is-open="true" data-lightbox>
+  <button id="open-lightbox">Open</button>
+  <lightbox-gallery id="lb2" data-lightbox>
     <div class="grid" slot="sources" data-lightbox>
       <img src="https://fslightbox.com/img/sky.jpeg" alt="" />
       <img src="https://fslightbox.com/img/child.jpeg" alt="" />
@@ -46,7 +49,16 @@
       <img src="https://fslightbox.com/img/butterflies.jpeg" alt="" />
     </div>
   </lightbox-gallery>
-  <script type="module" src="./dist/lightbox-gallery.js"></script>
+
+  <script>
+    const button = document.getElementById('open-lightbox');
+    const lightbox = document.getElementsByTagName('lightbox-gallery')[0];
+    if (button && lightbox) {
+      button.addEventListener('click', function () {
+        lightbox.isOpen = true;
+      });
+    }
+  </script>
 </body>
 
 </html>
