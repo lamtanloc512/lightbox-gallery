@@ -1,0 +1,6 @@
+/**
+ * Components barrel export
+ * @module components
+ */
+
+export * from "./gallery";

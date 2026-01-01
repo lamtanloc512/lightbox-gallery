@@ -6,16 +6,15 @@
   },
   "compilerOptions": {
     "lib": ["ESNEXT", "DOM", "DOM.Iterable"],
-    "experimentalDecorators": true,
     "checkJs": true
   },
   "imports": {
-    "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.0",
+    "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
     "@fluentui/web-components": "npm:@fluentui/web-components@^2.6.1",
-    "@microsoft/fast-element": "npm:@microsoft/fast-element@^2.0.1",
+    "@microsoft/fast-element": "npm:@microsoft/fast-element@^2.9.1",
     "@splidejs/splide": "npm:@splidejs/splide@^4.1.4",
     "lodash": "npm:lodash@^4.17.21",
     "normalize.css": "npm:normalize.css@^8.0.1",
-    "vite": "npm:vite@^6.0.1"
+    "vite": "npm:vite@^6.4.1"
   }
 }

@@ -1,144 +1,187 @@
+/**
+ * LightboxGallery - A customizable image lightbox web component
+ *
+ * @module gallery.component
+ * @example
+ * ```html
+ * <lightbox-gallery>
+ *   <div slot="sources" data-lightbox>
+ *     <img src="image1.jpg" alt="Image 1" />
+ *     <img src="image2.jpg" alt="Image 2" />
+ *   </div>
+ * </lightbox-gallery>
+ * ```
+ */
+
 import {
   attr,
-  children,
-  elements,
+  customElement,
   FASTElement,
-  html,
   observable,
-  ref,
-  repeat,
-  when,
 } from "@microsoft/fast-element";
-import { Splide as _Splide, Options } from "@splidejs/splide";
 import { isEmpty } from "lodash";
-import style from "./gallery.styles.ts";
-import defaultStyle from "./splide.styles.ts";
-import {
-  arrowLeft,
-  arrowRight,
-  closeButton,
-  horizontal,
-  nextSvg,
-  pauseButton,
-  playButton,
-  prevSvg,
-  resetZoomButton,
-  vertical,
-  zoomInButton,
-  zoomOutButton,
-} from "./toolbar.icons.ts";
 
-const styles = [defaultStyle, style];
+import { galleryTemplate } from "./gallery.template";
+import { galleryStyles } from "./gallery.styles";
+import { ZoomController, SlideshowController } from "./controllers";
+import type { ImgMetadata, Position } from "./types";
 
-type ImgMetadata = {
-  src: string;
-  alt: string;
-};
-class LightboxGallery extends FASTElement {
-  // Properties
+/**
+ * LightboxGallery Web Component
+ *
+ * A full-featured image lightbox with zoom, pan, autoplay, and thumbnail navigation.
+ *
+ * @fires lightbox-open - Fired when the lightbox opens
+ * @fires lightbox-close - Fired when the lightbox closes
+ * @fires slide-change - Fired when the current slide changes
+ *
+ * @csspart container - The main lightbox container
+ * @csspart toolbar - The toolbar with controls
+ * @csspart slideshow - The main image slideshow
+ * @csspart thumbnail - The thumbnail navigation
+ *
+ * @slot sources - Container for source images (must have data-lightbox attribute)
+ */
+@customElement({
+  name: "lightbox-gallery",
+  template: galleryTemplate,
+  styles: galleryStyles,
+})
+export class LightboxGallery extends FASTElement {
+  // ========================================
+  // Public Attributes
+  // ========================================
+
+  /**
+   * Whether the lightbox is currently open
+   * @attr is-open
+   */
   @attr({ attribute: "is-open", mode: "boolean" })
-  isOpen: boolean = true;
+  isOpen: boolean = false;
 
+  // ========================================
+  // Observable State
+  // ========================================
+
+  /** Use vertical layout (thumbnails on the right) */
   @observable
   isVertical: boolean = false;
 
+  /** Array of image metadata extracted from slot */
   @observable
   imgArray: ImgMetadata[] = [];
 
+  /** Reference to main Splide container */
   @observable
   splideRef?: HTMLElement;
 
-  @observable
-  mainSplide?: _Splide;
-
+  /** Reference to horizontal thumbnail container */
   @observable
   thumbnailRef?: HTMLElement;
 
+  /** Whether vertical thumbnail sidebar is collapsed */
   @observable
   collapseThumbnailVertical: boolean = false;
 
+  /** Reference to vertical thumbnail container */
   @observable
   thumbnailRefVertical?: HTMLElement;
 
-  @observable
-  thumbnailSplide?: _Splide;
-
-  @observable
-  thumbnailSplideVertical?: _Splide;
-
+  /** Children elements of thumbnail slider */
   @observable
   thumbnailChildren?: HTMLElement[] = [];
 
+  /** Children elements of main slider */
   @observable
   mainSplideChildren?: HTMLElement[] = [];
 
+  /** Currently active slide index */
   @observable
   currentIndex?: number;
 
+  /** Reference to current thumbnail element */
   @observable
   currentThumbnail?: HTMLElement;
 
+  /** Array of image nodes from slot */
   @observable
   imageNodes?: Element[] = [];
 
-  @observable
-  currentX = 0;
-
-  @observable
-  currentY = 0;
-
+  /** Autoplay enabled state */
   @observable
   autoPlay: boolean = false;
 
-  @observable
-  currPanZoomEl?: HTMLElement;
-
-  @observable
-  mouseX?: number;
-
-  @observable
-  mouseY?: number;
-
-  @observable
-  isPanning = false;
-
-  @observable
-  isZoomming = false;
-
+  /** Reference to the viewport element for zoom/pan */
   @observable
   viewport?: HTMLElement;
 
+  /** Current pan offset */
   @observable
-  start = { x: 0, y: 0 };
+  offset: Position = { x: 0, y: 0 };
 
+  /** Current zoom scale */
   @observable
-  offset = { x: 0, y: 0 };
+  scale: number = 1;
 
-  @observable
-  scale = 1;
-
+  /** Maximum height for slideshow container */
   @observable
   slideshowMaxHeight: number = 0;
 
+  /** Whether panning is in progress */
+  @observable
+  isPanning: boolean = false;
+
+  /** Whether zoom is active */
+  @observable
+  isZoomming: boolean = false;
+
+  // ========================================
+  // Controllers
+  // ========================================
+
+  private zoomController?: ZoomController;
+  private slideshowController?: SlideshowController;
+
+  // ========================================
+  // Lifecycle Hooks
+  // ========================================
+
+  /**
+   * Called when component is connected to DOM
+   */
   override connectedCallback(): void {
     super.connectedCallback();
-    this.initialize();
-    this.initEventForSlotNodes();
+    this.initializeImages();
+    this.initializeClickHandlers();
   }
 
-  handleCollapseThumbnailVertical = () => {
-    this.collapseThumbnailVertical = !this.collapseThumbnailVertical;
-  };
+  /**
+   * Called when component is disconnected from DOM
+   */
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.cleanup();
+  }
 
-  // Methods
-  private initialize(): void {
+  // ========================================
+  // Initialization Methods
+  // ========================================
+
+  /**
+   * Extract images from the sources slot
+   */
+  private initializeImages(): void {
     const sourcesSlot = this.shadowRoot?.querySelector(
       'slot[name="sources"]'
     ) as HTMLSlotElement;
-    const assignedElements = sourcesSlot?.assignedElements();
+
+    if (!sourcesSlot) return;
+
+    const assignedElements = sourcesSlot.assignedElements();
     const dataLightboxElement = assignedElements.find((x) =>
       x.hasAttribute("data-lightbox")
     )?.children;
+
     if (!dataLightboxElement) return;
 
     this.imageNodes = Array.from(dataLightboxElement).filter((el) => {
@@ -151,17 +194,23 @@ class LightboxGallery extends FASTElement {
     });
   }
 
-  private initEventForSlotNodes(): void {
-    if (this.imageNodes?.length === 0) return;
+  /**
+   * Setup click handlers on source images
+   */
+  private initializeClickHandlers(): void {
+    if (!this.imageNodes?.length) return;
 
-    this.imageNodes?.forEach((element: Element, index: number) => {
+    this.imageNodes.forEach((element: Element, index: number) => {
       element.addEventListener("click", () => {
-        this.isOpen = true;
-        this.currentIndex = index;
+        this.openLightbox(index);
       });
     });
   }
 
+  /**
+   * Initialize Splide slider instances
+   * Called after refs are available
+   */
   initializeSplide(
     splideRef?: HTMLElement,
     thumbnailRef?: HTMLElement,
@@ -169,136 +218,142 @@ class LightboxGallery extends FASTElement {
     currentIndex?: number
   ): void {
     if (!splideRef) return;
-    this.mainSplide = new _Splide(splideRef, {
-      type: "fade",
-      rewind: true,
-      arrows: this.isVertical ? false : true,
+
+    // Initialize controllers
+    this.slideshowController = new SlideshowController({
+      arrows: !this.isVertical,
       wheel: true,
-      pagination: false,
-      perPage: 1,
       interval: 3000,
+      onSlideChange: () => this.resetPanningState(),
     });
 
-    if (!thumbnailRef || !thumbnailRefVertical) {
-      this.mainSplide.mount();
-      return;
-    }
-
-    const thumbOptions: Options = {
-      focus: "center",
-      fixedHeight: 90,
-      autoWidth: true,
-      arrows: false,
-      wheel: true,
-      rewind: false,
-      pagination: false,
-      isNavigation: true,
-      useIndex: true,
-      gap: 5,
-      breakpoints: {
-        1100: {
-          fixedHeight: 90,
-        },
-        800: {
-          fixedHeight: 80,
-        },
-        450: {
-          fixedHeight: 70,
-        },
-      },
-    };
-    const thumbOptionsVertical: Options = {
-      ...thumbOptions,
-      direction: "ttb",
-      height: "90vh",
-      arrows: true,
-    };
-    this.thumbnailSplide = new _Splide(thumbnailRef, thumbOptions);
-    this.thumbnailSplideVertical = new _Splide(
+    this.slideshowController.initialize(
+      splideRef,
+      thumbnailRef,
       thumbnailRefVertical,
-      thumbOptionsVertical
+      currentIndex,
+      this.isVertical
     );
 
-    const thumbFixedHeight = this.thumbnailSplide.options.fixedHeight;
-    this.slideshowMaxHeight =
-      window.innerHeight - (thumbFixedHeight as number) * 3;
+    // Calculate max height
+    const thumbHeight = this.slideshowController.getThumbnailHeight();
+    this.slideshowMaxHeight = window.innerHeight - thumbHeight * 3;
 
-    this.mainSplide
-      .sync(this.thumbnailSplide)
-      .sync(this.thumbnailSplideVertical)
-      .mount();
-
-    this.thumbnailSplide.mount();
-    this.thumbnailSplideVertical.mount();
-
-    if (!currentIndex) return;
-    this.mainSplide.go(currentIndex);
-    requestAnimationFrame(() => {
-      this.thumbnailSplide?.Components.Controller.setIndex(currentIndex);
-      this.thumbnailSplide?.Components.Move.jump(currentIndex);
-      this.thumbnailSplideVertical?.Components.Controller.setIndex(
-        currentIndex
-      );
-      this.thumbnailSplideVertical?.Components.Move.jump(currentIndex);
-    });
-
-    this.mainSplide?.on("moved", this.resetPanningState.bind(this));
+    // Initialize zoom controller
+    this.zoomController = new ZoomController(this);
   }
 
+  // ========================================
+  // Public Methods
+  // ========================================
+
+  /**
+   * Open the lightbox at a specific index
+   */
+  openLightbox(index: number = 0): void {
+    this.isOpen = true;
+    this.currentIndex = index;
+    this.$emit("lightbox-open", { index });
+  }
+
+  /**
+   * Close the lightbox
+   */
   closeLightbox(): void {
     this.isOpen = false;
-    this.mainSplide?.destroy();
-    this.thumbnailSplide?.destroy();
+    this.slideshowController?.destroy();
+    this.$emit("lightbox-close");
   }
 
+  /**
+   * Toggle between horizontal and vertical layout
+   */
   toggleLayout = (): void => {
     this.isVertical = !this.isVertical;
   };
 
+  /**
+   * Toggle vertical thumbnail sidebar visibility
+   */
+  handleCollapseThumbnailVertical = (): void => {
+    this.collapseThumbnailVertical = !this.collapseThumbnailVertical;
+  };
+
+  // ========================================
+  // Autoplay Controls
+  // ========================================
+
+  /**
+   * Toggle autoplay on/off
+   */
   handleAutoPlay(): void {
-    const isPause = this.mainSplide?.Components.Autoplay.isPaused();
-    if (isPause) {
-      this.mainSplide?.Components.Autoplay.play();
+    if (!this.slideshowController) return;
+
+    if (this.slideshowController.isPaused()) {
+      this.slideshowController.play();
       this.autoPlay = true;
     } else {
-      this.mainSplide?.Components.Autoplay.pause();
+      this.slideshowController.pause();
       this.autoPlay = false;
     }
   }
 
+  // ========================================
+  // Zoom Controls
+  // ========================================
+
+  /**
+   * Zoom in on the current image
+   */
   handleZoomIn(): void {
+    if (this.autoPlay) {
+      this.slideshowController?.pause();
+    }
+    this.slideshowController?.setDragEnabled(false);
+
     this.isZoomming = true;
-    if (this.autoPlay) this.mainSplide?.Components.Autoplay.pause();
-    this.mainSplide?.Components.Drag.disable(true);
-    if (!this.viewport) return;
-    const curr = this.viewport;
-    curr.style.cursor = "grab";
     const newScale = this.scale + 0.25;
     this.scale = Math.min(newScale, 4);
+
+    if (this.viewport) {
+      this.viewport.style.cursor = "grab";
+    }
+
     if (this.scale > 1) {
-      curr.style.cursor = "grab";
       this.setupPanningZoom();
     }
   }
 
+  /**
+   * Zoom out on the current image
+   */
   handleZoomOut(): void {
-    if (this.autoPlay) this.mainSplide?.Components.Autoplay.pause();
-    this.mainSplide?.Components.Drag.disable(true);
-    if (!this.viewport) return;
-    const curr = this.viewport;
+    if (this.autoPlay) {
+      this.slideshowController?.pause();
+    }
+    this.slideshowController?.setDragEnabled(false);
+
     const newScale = this.scale - 0.25;
     this.scale = Math.max(newScale, 0.75);
 
-    if (this.scale <= 1) {
-      curr.style.cursor = "grab";
-      this.setupPanningZoom();
+    if (this.viewport && this.scale <= 1) {
+      this.viewport.style.cursor = "grab";
     }
   }
 
+  /**
+   * Reset zoom and pan to default
+   */
   resetZoom(): void {
     this.resetPanningState();
     this.cleanupPanningZoom();
   }
+
+  // ========================================
+  // Panning (Private)
+  // ========================================
+
+  private start: Position = { x: 0, y: 0 };
 
   private setupPanningZoom(): void {
     if (!this.viewport) return;
@@ -314,13 +369,16 @@ class LightboxGallery extends FASTElement {
     this.viewport.removeEventListener("pointerup", this.handlePanEnd);
   }
 
-  private resetPanningState() {
-    if (!this.viewport) return;
+  private resetPanningState(): void {
     this.isPanning = false;
-    this.viewport.style.cursor = "default";
     this.offset = { x: 0, y: 0 };
     this.scale = 1;
-    this.mainSplide?.Components.Drag.disable(false);
+
+    if (this.viewport) {
+      this.viewport.style.cursor = "default";
+    }
+
+    this.slideshowController?.setDragEnabled(true);
     this.cleanupPanningZoom();
   }
 
@@ -332,13 +390,13 @@ class LightboxGallery extends FASTElement {
       y: ev.clientY - this.offset.y,
     };
 
-    if (!this.viewport) return;
-    this.viewport.style.transition = "none";
+    if (this.viewport) {
+      this.viewport.style.transition = "none";
+    }
   };
 
   private handlePanMove = (ev: MouseEvent): void => {
     if (!this.isPanning) return;
-    this.isPanning = true;
     this.offset = {
       x: ev.clientX - this.start.x,
       y: ev.clientY - this.start.y,
@@ -347,198 +405,19 @@ class LightboxGallery extends FASTElement {
 
   private handlePanEnd = (): void => {
     this.isPanning = false;
-    if (!this.viewport) return;
-    this.viewport.style.transition =
-      "all 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
+    if (this.viewport) {
+      this.viewport.style.transition =
+        "all 0.2s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
+    }
   };
 
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
+  // ========================================
+  // Cleanup
+  // ========================================
+
+  private cleanup(): void {
+    this.slideshowController?.destroy();
+    this.zoomController?.destroy();
+    this.cleanupPanningZoom();
   }
 }
-
-const splideTemplate = html`
-  ${when(
-    (x: LightboxGallery) => x.imgArray.length > 0,
-    html`
-      <div ${ref("splideRef")} class="splide">
-        <div class="splide__arrows">
-          ${when(
-            (x) => !x.isVertical,
-            html` <button class="splide__arrow splide__arrow--prev">
-                ${prevSvg}
-              </button>
-              <button class="splide__arrow splide__arrow--next">
-                ${nextSvg}
-              </button>`
-          )}
-        </div>
-        <div class="splide__track">
-          <ul
-            class="splide__list"
-            ${children({
-              property: "mainSplideChildren",
-              filter: elements("li"),
-            })}
-            ${ref("viewport")}
-            style="
-              transform: translate(${(x) => x.offset.x}px, ${(x) =>
-              x.offset.y}px) scale(${(x) => x.scale});
-              max-height: ${(x) => x.slideshowMaxHeight}px"
-          >
-            ${repeat(
-              (x: LightboxGallery) => x.imgArray,
-              html<ImgMetadata>`
-                ${(x, c) =>
-                  html` <li class="splide__slide">
-                    <img src=${x.src} alt=${x.alt} data-index=${c.index} />
-                  </li>`}
-              `,
-              { positioning: true }
-            )}
-          </ul>
-        </div>
-      </div>
-    `
-  )}
-`;
-
-const thumbnailTemplate = html`
-  ${when(
-    (x: LightboxGallery) => x.imgArray.length > 0,
-    html<LightboxGallery>`
-      <div ${ref("thumbnailRef")} class="splide">
-        <div class="splide__track">
-          <ul
-            class="splide__list"
-            ${children({
-              property: "thumbnailChildren",
-              filter: elements("li"),
-            })}
-          >
-            ${repeat(
-              (x) => x.imgArray,
-              html<ImgMetadata>`
-                <li class="splide__slide lb--thumbnail--item">
-                  ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
-                </li>
-              `
-            )}
-          </ul>
-        </div>
-      </div>
-    `
-  )}
-`;
-
-const thumbnailTemplateVertical = html`
-  ${when(
-    (x: LightboxGallery) => x.imgArray.length > 0,
-    html<LightboxGallery>`
-      <div ${ref("thumbnailRefVertical")} class="splide">
-        <div class="splide__arrows">
-          ${when(
-            (x) => x.isVertical,
-            html` <button class="splide__arrow splide__arrow--prev">
-                ${prevSvg}
-              </button>
-              <button class="splide__arrow splide__arrow--next">
-                ${nextSvg}
-              </button>`
-          )}
-        </div>
-        <div class="splide__track">
-          <ul
-            class="splide__list"
-            ${children({
-              property: "thumbnailChildren",
-              filter: elements("li"),
-            })}
-          >
-            ${repeat(
-              (x) => x.imgArray,
-              html<ImgMetadata>`
-                <li class="splide__slide lb--thumbnail--item">
-                  ${(x) => html`<img src=${x.src} alt=${x.alt} />`}
-                </li>
-              `
-            )}
-          </ul>
-        </div>
-      </div>
-    `
-  )}
-`;
-
-const toolbarTemplate = html<LightboxGallery>` ${when(
-  (x: LightboxGallery) => x.imgArray.length > 0,
-  html`
-    ${(x) =>
-      x.isVertical
-        ? html`<button @click=${(x) => x.handleCollapseThumbnailVertical()}>
-            ${(x) => (x.collapseThumbnailVertical ? arrowRight : arrowLeft)}
-          </button>`
-        : ""}
-    <button @click=${(x) => x.handleZoomIn()} title="Zoom In">
-      ${zoomInButton}
-    </button>
-    <button @click=${(x) => x.handleZoomOut()} title="Zoom Out">
-      ${zoomOutButton}
-    </button>
-    <button @click=${(x: LightboxGallery) => x.resetZoom()} title="Reset Zoom">
-      ${resetZoomButton}
-    </button>
-    <button @click=${(x) => x.handleAutoPlay()} title="Auto Play">
-      ${when((x) => x.autoPlay, html` ${pauseButton} `, html` ${playButton} `)}
-    </button>
-    <button @click=${(x) => x.toggleLayout()} title="Toggle Layout">
-      ${when((x) => x.isVertical, html` ${horizontal} `, html` ${vertical} `)}
-    </button>
-    <button
-      class="btn-close-lightbox"
-      @click=${(x) => x.closeLightbox()}
-      title="Close"
-    >
-      ${closeButton}
-    </button>
-  `
-)}`;
-
-const template = html<LightboxGallery>`
-  <template>
-    <slot name="sources"></slot>
-    ${when(
-      (x) => x.isOpen,
-      html` <div class="lb--container">
-        <div class="lb--toolbar">${toolbarTemplate}</div>
-        <div class="lb--slideshow">${splideTemplate}</div>
-        <div
-          class="lb--thumbnail--vertical"
-          style="display: ${(x) => (x.isVertical ? "flex" : "none")}; ${(x) =>
-            x.collapseThumbnailVertical ? "width: 0" : ""}"
-        >
-          ${thumbnailTemplateVertical}
-        </div>
-        <div
-          class="lb--thumbnail"
-          style="display: ${(x) => (!x.isVertical ? "flex" : "none")}"
-        >
-          ${thumbnailTemplate}
-        </div>
-        ${(x: LightboxGallery) =>
-          x.initializeSplide(
-            x.splideRef,
-            x.thumbnailRef,
-            x.thumbnailRefVertical,
-            x.currentIndex
-          )}
-      </div>`
-    )}
-  </template>
-`;
-
-LightboxGallery.define({
-  name: "lightbox-gallery",
-  template,
-  styles,
-});
