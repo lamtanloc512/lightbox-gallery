@@ -1,0 +1,35 @@
+{
+  "name": "@ethandev512/lightbox-gallery",
+  "version": "0.1.3",
+  "description": "A modern, customizable image lightbox web component built with FAST Element and Splide.js.",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/main.umd.js",
+  "module": "./dist/main.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.umd.js"
+    },
+    "./dist/main.css": "./dist/main.css"
+  },
+  "scripts": {
+    "build": "deno task build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lamtanloc512/lightbox-gallery.git"
+  },
+  "keywords": [
+    "lightbox",
+    "gallery",
+    "web-component",
+    "image",
+    "fast-element",
+    "splide"
+  ],
+  "author": "Ethan",
+  "license": "MIT"
+}

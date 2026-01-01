@@ -219,7 +219,7 @@ export const toolbarTemplate: ViewTemplate<LightboxGallery> = html<LightboxGalle
  */
 export const galleryTemplate: ViewTemplate<LightboxGallery> = html<LightboxGallery>`
   <template>
-    <div style="display: none">
+    <div class="lb--sources">
       <slot name="sources"></slot>
     </div>
     ${when(

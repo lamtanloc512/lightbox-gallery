@@ -1,47 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lightbox Plugin</title>
-    <link rel="stylesheet" href="./src/index.css" />
-    <script type="module" src="/src/main.ts"></script>
-    <style>
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-        padding: 5rem;
-        overflow: hidden;
-      }
-      .grid img {
-        max-width: 100%;
-        height: auto;
-        object-fit: contain;
-      }
-    </style>
-  </head>
-  <body>
-    <lightbox-gallery id="lb2" is-open="false" data-lightbox>
-      <div class="grid" slot="sources" data-lightbox>
-        <img src="https://fslightbox.com/img/sky.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/child.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/flowers-sunshine.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/ocean.jpg" alt="" />
-        <img src="https://fslightbox.com/img/lake-in-forest.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/greenland.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/maninmountain.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/butterflies.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/sky.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/child.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/flowers-sunshine.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/ocean.jpg" alt="" />
-        <img src="https://fslightbox.com/img/lake-in-forest.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/greenland.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/maninmountain.jpeg" alt="" />
-        <img src="https://fslightbox.com/img/butterflies.jpeg" alt="" />
-      </div>
-    </lightbox-gallery>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lightbox Plugin</title>
+  <link rel="stylesheet" href="./src/index.css" />
+  <script type="module" src="https://esm.sh/jsr/@ethandev512/lightbox-gallery"></script>
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      padding: 5rem;
+      overflow: hidden;
+    }
+
+    .grid img {
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+  </style>
+</head>
+
+<body>
+  <lightbox-gallery id="lb2" is-open="false" data-lightbox>
+    <div class="grid" slot="sources" data-lightbox>
+      <img src="https://fslightbox.com/img/sky.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/child.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/flowers-sunshine.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/ocean.jpg" alt="" />
+      <img src="https://fslightbox.com/img/lake-in-forest.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/greenland.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/maninmountain.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/butterflies.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/sky.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/child.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/flowers-sunshine.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/ocean.jpg" alt="" />
+      <img src="https://fslightbox.com/img/lake-in-forest.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/greenland.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/maninmountain.jpeg" alt="" />
+      <img src="https://fslightbox.com/img/butterflies.jpeg" alt="" />
+    </div>
+  </lightbox-gallery>
+</body>
+
 </html>

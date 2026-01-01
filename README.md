@@ -27,16 +27,24 @@ npm install lightbox-gallery
 deno add npm:lightbox-gallery
 ```
 
-### Usage
+### Using CDN (Unpkg / esm.sh)
 
-**1. Import the component**
+**For JSR (No npm publish required):**
 
-```typescript
-// Auto-register the component
-import "lightbox-gallery";
+```html
+<script
+  type="module"
+  src="https://esm.sh/jsr/@ethandev512/lightbox-gallery"
+></script>
+```
 
-// Or import with types
-import { LightboxGallery, type ImgMetadata } from "lightbox-gallery";
+**For NPM (Unpkg):**
+
+```html
+<script
+  type="module"
+  src="https://unpkg.com/@ethandev512/lightbox-gallery/dist/main.mjs"
+></script>
 ```
 
 **2. Add markup**

@@ -19,7 +19,7 @@ import {
   FASTElement,
   observable,
 } from "@microsoft/fast-element";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty.js";
 
 import { galleryTemplate } from "./gallery.template.ts";
 import { galleryStyles } from "./gallery.styles.ts";

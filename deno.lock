@@ -438,6 +438,13 @@
       "bin": true
     }
   },
+  "redirects": {
+    "https://esm.sh/lodash": "https://esm.sh/lodash@4.17.21"
+  },
+  "remote": {
+    "https://esm.sh/lodash@4.17.21": "c2f90ffd948b7a30f054986888bdc2667824115fa48ad583ca8b3a579ca4a5a8",
+    "https://esm.sh/lodash@4.17.21/denonext/lodash.mjs": "dbfb35d4fcc605aaf0544bcc4505edb828aab79b7ab447df78743552cef8ceb4"
+  },
   "workspace": {
     "dependencies": [
       "npm:@deno/vite-plugin@^1.0.6",
