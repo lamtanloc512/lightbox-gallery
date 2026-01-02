@@ -27,25 +27,18 @@ npm install lightbox-gallery
 deno add npm:lightbox-gallery
 ```
 
-### Using CDN (Unpkg / esm.sh)
+### Using CDN
 
-**For JSR (No npm publish required):**
-
-```html
-<script
-  type="module"
-  src="https://esm.sh/jsr/@ethandev512/lightbox-gallery"
-></script>
-```
-
-**For NPM (Unpkg):**
+Import the pre-built ESM bundle directly in your HTML:
 
 ```html
 <script
   type="module"
-  src="https://unpkg.com/@ethandev512/lightbox-gallery/dist/main.mjs"
+  src="https://unpkg.com/@ethandev512/lightbox-gallery/dist/lightbox-gallery.js"
 ></script>
 ```
+
+> **Note:** The CDN build includes all dependencies bundled. Just import and use!
 
 **2. Add markup**
 
