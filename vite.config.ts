@@ -5,6 +5,7 @@ import deno from "@deno/vite-plugin";
 export default defineConfig({
   plugins: [deno()],
   build: {
+    target: "es2015",
     lib: {
       entry: "src/main.ts",
       name: "LightboxGallery",

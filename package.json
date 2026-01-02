@@ -6,12 +6,10 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/lightbox-gallery.cjs",
   "module": "./dist/lightbox-gallery.js",
   "exports": {
     ".": {
-      "import": "./dist/lightbox-gallery.js",
-      "require": "./dist/lightbox-gallery.cjs"
+      "import": "./dist/lightbox-gallery.js"
     }
   },
   "scripts": {

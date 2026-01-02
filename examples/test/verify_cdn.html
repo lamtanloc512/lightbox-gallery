@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDN/ESM Verification</title>
+  <!-- Use the ESM build module -->
+  <script type="module" src="../../dist/lightbox-gallery.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    lightbox-gallery {
+      display: block;
+      margin-top: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>CDN/ESM Build Verification</h1>
+  <p>Checking if LightboxGallery is registered via ESM bundle...</p>
+  <div id="status"></div>
+
+  <button id="open-lightbox">Open Lightbox</button>
+
+  <lightbox-gallery id="lb1">
+    <div slot="sources" data-lightbox>
+      <img src="https://picsum.photos/id/10/800/600" alt="Forest">
+      <img src="https://picsum.photos/id/11/800/600" alt="River">
+      <img src="https://picsum.photos/id/12/800/600" alt="Beach">
+    </div>
+  </lightbox-gallery>
+
+  <script>
+    const statusEl = document.getElementById('status');
+
+    // Check if defined (might take a tick if script is async, but type=module is deferred usually)
+    // We'll check immediately, but real usage it definitely works by the time DOM is ready mostly.
+    if (customElements.get('lightbox-gallery')) {
+      statusEl.innerHTML = '<span class="success">✓ LightboxGallery is registered!</span>';
+    } else {
+      // It might be async, so let's verify after a short timeout just in case, 
+      // though type="module" should execute before DOMContentLoaded if not async? 
+      // Actually type=module is deferred.
+      window.addEventListener('load', () => {
+        if (customElements.get('lightbox-gallery')) {
+          statusEl.innerHTML = '<span class="success">✓ LightboxGallery is registered!</span>';
+        } else {
+          statusEl.innerHTML = '<span class="error">✗ LightboxGallery is NOT registered.</span>';
+        }
+      });
+    }
+
+    const btn = document.getElementById('open-lightbox');
+    const lb = document.getElementById('lb1');
+    btn.addEventListener('click', () => {
+      lb.isOpen = true;
+    });
+  </script>
+</body>
+
+</html>
