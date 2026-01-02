@@ -104,7 +104,7 @@ const componentStyles: ElementStyles = css`
     background-color: rgba(0, 0, 0, 0.5);
     overflow-x: auto;
     padding: 1rem 0;
-    margin: 0 1rem;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,7 +114,7 @@ const componentStyles: ElementStyles = css`
   .lb--thumbnail--vertical {
     position: fixed;
     right: 0;
-    bottom: 0;
+    bottom: 20px;
     background-color: rgba(0, 0, 0, 0.5);
     overflow-x: auto;
     padding: 1rem 0;
